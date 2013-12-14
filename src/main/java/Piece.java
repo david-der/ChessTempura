@@ -21,6 +21,8 @@ public class Piece {
 			this.name1 = pieceName;
 		}
 		else if( pieceName.equals("open")) {
+			//this.unicode = "\u25FC"; //black square
+			//this.unicode = "\u25FB"; //white square
 			this.unicode = ".";
 			this.name1 = ".";
 		}
@@ -29,8 +31,8 @@ public class Piece {
 			this.name1 = " ";
 		}
 		else if( pieceName.equals("topBorder") || pieceName.equals("bottomBorder")) {
-			this.unicode = "_";
-			this.name1 = "_";
+			this.unicode = "\u005F";
+			this.name1 = "\u005F";
 		}
 		else if( pieceName.equals("leftBorder") || pieceName.equals("rightBorder")) {
 			this.unicode = "|";

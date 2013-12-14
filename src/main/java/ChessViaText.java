@@ -42,14 +42,32 @@ public class ChessViaText {
 					++ct.move_counter;
 				}
 			}
-			else {
+			else { // code duplication here, because previously I had black as CPU
 				System.out.print("\nBlack to move: ");
 				ct.player = "black";
 
-				System.out.println("Computer unable to move");
-				ComputerMove cpu_move = new ComputerMove(ct.board, ct.player);
-				System.out.println("Current pieces score: " + cpu_move.piecesScore());
-				++ct.move_counter;
+				//Get move
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				try {
+					move = br.readLine();
+					if(move.equals("quit")) {
+						System.exit(-1);
+					}
+				} catch (IOException ioe) {
+					System.out.println("IO error trying to read your move.");
+					System.exit(1);
+				}
+				//Execute move
+				HumanMove current_move = new HumanMove(ct.board, ct.player);
+				if( current_move.movePiece(move) ) {
+					++ct.move_counter;
+				}
+				
+				////these four lines were for black as CPU
+				//System.out.println("Computer unable to move");
+				//ComputerMove cpu_move = new ComputerMove(ct.board, ct.player);
+				//System.out.println("Current pieces score: " + cpu_move.piecesScore());
+				//++ct.move_counter;
 			}
 
 

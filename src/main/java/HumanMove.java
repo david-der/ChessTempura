@@ -135,8 +135,9 @@ public class HumanMove {
 				return false;
 			}
 		}
+		//pawns are the toughest because they are most restricted, and direction matters
 		//white pawn
-		if(name1.equals("p")) {
+		if(name1.equals("p") && piece.color.equals("white")) {
 			if( abs(newBoardCol-oldBoardCol) > 1 ) {
 				System.out.println("illegal pawn move. too far horizontally");
 				return false;
@@ -161,7 +162,43 @@ public class HumanMove {
 				System.out.println("illegal pawn move. can only move 2 spaces from starting square");
 				return false;
 			}
+			else if(board[newRow][newCol].color.equals("black") && ( abs(newBoardCol-oldBoardCol) != 1 || newBoardRow-oldBoardRow != 1  )  ) {
+				System.out.println("illegal pawn move. incorrect attack");
+				return false;
+			}
 		}
+		//black pawn
+		if(name1.equals("p") && piece.color.equals("black")) {
+			if( abs(newBoardCol-oldBoardCol) > 1 ) {
+				System.out.println("illegal pawn move. too far horizontally");
+				return false;
+			}
+			else if( abs(newBoardCol-oldBoardCol) == 1 && !board[newRow][newCol].color.equals("white") ) {
+				System.out.println("illegal pawn move. can't change column if not attacking");
+				return false;
+			}
+			else if( abs(newBoardCol-oldBoardCol) == 0 && board[newRow][newCol].color.equals("white") ) {
+				System.out.println("illegal pawn move. can't attack straight");
+				return false;
+			}
+			else if( oldBoardRow - newBoardRow < 0 ) {
+				System.out.println("illegal pawn move. backwards");
+				return false;
+			}
+			else if( oldBoardRow - newBoardRow > 2) {
+				System.out.println("illegal pawn move. too far");
+				return false;
+			}
+			else if(oldBoardRow != 7 && abs(newBoardRow - oldBoardRow) == 2) {
+				System.out.println("illegal pawn move. can only move 2 spaces from starting square");
+				return false;
+			}
+			else if(board[newRow][newCol].color.equals("white") && ( abs(newBoardCol-oldBoardCol) != 1 || oldBoardRow-newBoardRow != 1  )  ) {
+				System.out.println("illegal pawn move. incorrect attack");
+				return false;
+			}
+		}
+		
 		if(name1.equals("R")) {
 			if( abs(newBoardCol-oldBoardCol) > 0 && abs(newBoardRow-oldBoardRow) > 0 ) {
 				System.out.println("illegal Rook move. can only move along files and ranks");
