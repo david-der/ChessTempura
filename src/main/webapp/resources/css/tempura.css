@@ -1,0 +1,30 @@
+.light-square {
+    background-color: #ffffff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#cccccc));
+    background-image: -webkit-linear-gradient(top, #ffffff, #cccccc);
+    background-image:    -moz-linear-gradient(top, #ffffff, #cccccc);
+    background-image:      -o-linear-gradient(top, #ffffff, #cccccc);
+    background-image:         linear-gradient(to bottom, #ffffff, #cccccc);
+    text-align: center;
+    height: 65px;
+    width: 65px;
+    border: 1px solid black;
+}
+
+.dark-square {
+    background-color: #777777;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#aaaaaa), to(#666666));
+    background-image: -webkit-linear-gradient(top, #aaaaaa, #666666);
+    background-image:    -moz-linear-gradient(top, #aaaaaa, #666666);
+    background-image:      -o-linear-gradient(top, #aaaaaa, #666666);
+    background-image:         linear-gradient(to bottom, #aaaaaa, #666666);
+    text-align: center;
+    height: 65px;
+    width: 65px;
+    border: 1px solid black;
+}
+
+.img-piece {
+    height: 55px;
+    width: 55px;
+}
