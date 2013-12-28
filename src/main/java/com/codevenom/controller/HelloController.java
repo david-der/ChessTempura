@@ -1,8 +1,11 @@
 package com.codevenom.controller;
 
+import com.codevenom.service.LegalMoveService;
 import com.firebase.client.Firebase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -22,4 +25,12 @@ public class HelloController {
         String msg = "Hello there, brothers";
         return new ModelAndView("hello","message1",msg);
     }
+
+    @RequestMapping(value="/makeMove.htm",method= RequestMethod.POST)
+    public @ResponseBody String makeMove() {
+        boolean isLegal = LegalMoveService.isThisMoveLegal(null,null);
+        System.out.println("We have arrived");
+        return "Yes";
+    }
+
 }
