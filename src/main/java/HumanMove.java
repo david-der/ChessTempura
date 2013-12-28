@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 //import java.io.*;
 //import java.util.ArrayList;
 
@@ -26,11 +30,11 @@ public class HumanMove {
 		//System.out.println("Your move " + c1 + c2 + c3 + c4 + c5);
 
 		if(newCol < 1 || newCol > 8 || newRow < 1 || newRow > 8) {
-			System.out.println("illegal move,");
+			System.out.println("out of bounds,");
 			return false;
 		}
 		if(oldCol < 1 || oldCol > 8 || oldRow < 1 || oldRow > 8) {
-			System.out.println("illegal move,");
+			System.out.println("out of bounds,");
 			return false;
 		}
 		if(board[oldRow][oldCol].name1.equals(".")) {
@@ -58,16 +62,30 @@ public class HumanMove {
 			}
 		}
 		if(board[newRow][newCol].color.equals(player)) {
-			System.out.println("one of your pieces is on that square");
+			System.out.println("one of your pieces is on that square,");
 			return false;
 		}
-
 
 		boolean is_legal_move = isLegalMoveForPiece(board[oldRow][oldCol], move);
 		if( ! is_legal_move ) {
 			return false;
 		}
 
+		//must have been a legal move to promote the pawn
+		if(board[oldRow][oldCol].fullName.equals("wPawn") && newRow == 1) { //white Pawn reaches back rank
+			board[newRow][newCol] = promotePawn(board[oldRow][oldCol]);
+			board[oldRow][oldCol] = new Piece("open");
+			Board b = new Board();
+			b.printBoard(board);
+			return true;
+		}
+		if(board[oldRow][oldCol].fullName.equals("bPawn") && newRow == 8) { //black Pawn reaches back rank
+			board[newRow][newCol] = promotePawn(board[oldRow][oldCol]);
+			board[oldRow][oldCol] = new Piece("open");
+			Board b = new Board();
+			b.printBoard(board);
+			return true;
+		}
 
 		// execute move
 		board[newRow][newCol] = board[oldRow][oldCol];
@@ -103,6 +121,34 @@ public class HumanMove {
 		return 0;
 	}
 
+	public Piece promotePawn(Piece p) {
+		
+		System.out.print("\nPromote your pawn, enter Q (or R,B,N): ");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			String name1 = br.readLine();
+			if(p.color.equals("white")) {
+				if(name1.equals("Q")) { p = new Piece("wQueen"); }
+				else if(name1.equals("R")) { p = new Piece("wRook"); }
+				else if(name1.equals("B")) { p = new Piece("wBishop"); }
+				else if(name1.equals("N")) { p = new Piece("wKnight"); }
+				else {  p = new Piece("wQueen"); } //incorrect entry, just take a Queen
+			}
+			if(p.color.equals("black")) {
+				if(name1.equals("Q")) { p = new Piece("bQueen"); }
+				else if(name1.equals("R")) { p = new Piece("bRook"); }
+				else if(name1.equals("B")) { p = new Piece("bBishop"); }
+				else if(name1.equals("N")) { p = new Piece("bKnight"); }
+				else {  p = new Piece("bQueen"); }
+			}
+		} catch (IOException ioe) {
+			System.out.println("IO error trying to read your move.");
+			System.exit(1);
+		}
+		
+		return p;
+	}
+	
 	public boolean isLegalMoveForPiece(Piece piece, String move) {
 		String c1 = move.substring(0,1);
 		String c2 = move.substring(1,2);
@@ -114,6 +160,8 @@ public class HumanMove {
 		String name1 = c3;
 		int newCol = getCol(c4);
 		int newRow = getRow(c5);
+		
+		//the row and column index in Piece[][] is not necessarily the same as the row and column on the physical game board
 		int oldBoardCol = oldCol;
 		int oldBoardRow = -(oldRow-9);
 		int newBoardCol = newCol;

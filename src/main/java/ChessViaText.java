@@ -15,6 +15,14 @@ public class ChessViaText {
 
 		Board b = new Board();
 		b.showPieceNames();
+		
+		//Piece[][] emptyBoard = b.getEmptyBoard();
+		//b.printBoard(emptyBoard);
+		
+		//Piece[][] randomBoard = b.getRandomBoardWithSpecificPieces("wPawn wPawn wPawn bPawn bPawn bPawn");
+		//b.printBoard(randomBoard);
+		//System.exit(-1);
+		
 		ct.board = b.startingBoard();
 		b.printBoard(ct.board);
 
