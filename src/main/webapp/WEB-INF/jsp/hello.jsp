@@ -14,10 +14,10 @@
             <div class="col-md-12">
                 <table id="chess-board">
                     <tr>
-                        <td class="light-square">
+                        <td id="a8" class="light-square">
                             <img src="<c:url value='/resources/images/bR.png'/>" class="img-piece">
                         </td>
-                        <td class="dark-square">
+                        <td id="b8" class="dark-square">
                             <img src="<c:url value='/resources/images/bN.png'/>" class="img-piece">
                         </td>
                         <td class="light-square">
@@ -167,15 +167,19 @@
         var isPieceHighlighted = false;
         var isWhitesTurn = true;
         var highlightedPiece;
+        var start = null;
+        var end = null;
 
         $('#chess-board td').click(function() {
             if (isPieceHighlighted)
                 clickCount++;
 
             if (clickCount <= 1) {
+                start = $(this).attr("id");
                 return false;
             } else {
-                var isLegal = sendMoveToServer();
+                end = $(this).attr("id");
+                var isLegal = sendMoveToServer(start, end, "pawn");
                 if (! isLegal){
                     // rollback the move that just was attempted
                 }
@@ -195,6 +199,7 @@
                 highlightedPiece = this;
                 console.log('different piece');
             } else {
+                start = null;
                 highlightedPiece = null;
                 clickCount = 0;
                 isPieceHighlighted = false;
@@ -202,11 +207,11 @@
             }
         });
 
-        function sendMoveToServer() {
+        function sendMoveToServer(start, end, p) {
             $.ajax({
                 type: "POST",
                 url: "/makeMove.htm",
-                data: "test=Bryan",
+                data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p,
                 success: function(response){
                     // we have the response
                     console.log("YES");

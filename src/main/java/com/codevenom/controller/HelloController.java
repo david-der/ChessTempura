@@ -5,8 +5,11 @@ import com.firebase.client.Firebase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Map;
 
 /**
  * Copyright 2013 SWOL.co - Soccer Without Limits
@@ -27,9 +30,15 @@ public class HelloController {
     }
 
     @RequestMapping(value="/makeMove.htm",method= RequestMethod.POST)
-    public @ResponseBody String makeMove() {
+    public @ResponseBody String makeMove(@RequestParam Map<String,String> params) {
+
+        String startSquare = params.get("startSquare");
+        String endSquare = params.get("endSquare");
+        String piece = params.get("piece");
+
         boolean isLegal = LegalMoveService.isThisMoveLegal(null,null);
-        System.out.println("We have arrived");
+        System.out.println("Start square: " + startSquare);
+        System.out.println("End square: " + endSquare);
         return "Yes";
     }
 
