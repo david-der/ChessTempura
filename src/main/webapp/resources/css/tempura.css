@@ -1,3 +1,7 @@
+.highlighted {
+    border: solid lightseagreen 3px;
+}
+
 .light-square {
     background-color: #ffffff;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#cccccc));
@@ -24,11 +28,61 @@
     border: 1px solid black;
 }
 
+.border {
+    height: 55px;
+    width: 55px;
+}
+
 .img-piece {
     height: 55px;
     width: 55px;
 }
 
-.highlighted {
-    border: solid lightseagreen 3px;
+.wPawn {
+    height: 50px;
+    width: 50px;
+}
+.wKnight {
+    height: 55px;
+    width: 55px;
+}
+.wBishop {
+    height: 55px;
+    width: 55px;
+}
+.wRook {
+    height: 55px;
+    width: 55px;
+}
+.wQueen {
+    height: 55px;
+    width: 55px;
+}
+.wKing {
+    height: 55px;
+    width: 55px;
+}
+.bPawn {
+    height: 50px;
+    width: 50px;
+}
+.bKnight {
+    height: 55px;
+    width: 55px;
+}
+.bBishop {
+    height: 55px;
+    width: 55px;
+}
+.bRook {
+    height: 55px;
+    width: 55px;
+}
+.bQueen {
+    height: 55px;
+    width: 55px;
+}
+.bKing {
+    height: 55px;
+    width: 55px;
 }
