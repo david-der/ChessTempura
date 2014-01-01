@@ -200,20 +200,13 @@
 
             if (clickCount <= 1) {
                 start = $(this).attr("id");
-                piece = $(this).attr("class");
+                //alert('td ' + piece)
                 return false;
             } else {
                 end = $(this).attr("id");
                 var isLegal = sendMoveToServer(start, end, piece);
                 if (! isLegal){
                     // rollback the move that just was attempted
-                    isPieceHighlighted = false;
-                    highlightedPiece = null;
-                    start = null;
-                    end = null;
-                    piece = null;
-                    clickCount = 0;
-                    return false;
                 }
                 if(isWhitesTurn == true) {
                 	isWhitesTurn == false;
@@ -228,10 +221,12 @@
         $('#chess-board img').click(function() {
             // Unhighlight all the images
             $('#chess-board img').removeClass('highlighted');
+            //alert('img ' + piece)
 
             if (! (this == highlightedPiece)) {
                 // Highlight the newly selected image
                 $(this).addClass('highlighted');
+                piece = $(this).attr("class");
                 isPieceHighlighted = true;
                 highlightedPiece = this;
                 console.log('different piece');
@@ -254,7 +249,7 @@
                     console.log("YES");
                 },
                 error: function(e){
-                    alert('Error: ' + e);
+                    alert('Error in send move to server: ' + start + end + piece);
                 }
             });
         }
