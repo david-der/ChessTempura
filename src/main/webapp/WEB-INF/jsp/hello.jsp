@@ -188,7 +188,6 @@
 
         var clickCount = 0;
         var isPieceHighlighted = false;
-        var isWhitesTurn = true;
         var highlightedPiece;
         var start = null;
         var end = null;
@@ -205,16 +204,14 @@
             } else {
                 end = $(this).attr("id");
                 var isLegal = sendMoveToServer(start, end, piece);
+                alert('isLegal ' + isLegal)
                 if (! isLegal){
                     // rollback the move that just was attempted
                 }
-                if(isWhitesTurn == true) {
-                	isWhitesTurn == false;
-                } else {
-                	isWhitesTurn == true;
+                else {
+                    $(this).append(highlightedPiece);
+                    console.log('Ok, just clicked a piece and a square');
                 }
-                $(this).append(highlightedPiece);
-                console.log('Ok, just clicked a piece and a square');
             }
         });
 
@@ -246,12 +243,15 @@
                 data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p,
                 success: function(response){
                     // we have the response
-                    console.log("YES");
+                    //alert('response ' + response)
+
+                    console.log("YES2");
                 },
                 error: function(e){
-                    alert('Error in send move to server: ' + start + end + piece);
+                    alert('Error in send move to server: ' + start + end + p);
                 }
             });
+            return true;
         }
         
         <%--function makeTableHTML(myArray) {
