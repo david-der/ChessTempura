@@ -8,15 +8,15 @@ package com.codevenom.service;
  */
 public class LegalMoveService {
 
-    public static boolean isThisMoveLegal(String start, String end, String piece) {
+    public static String isThisMoveLegal(String start, String end, String piece) {
         System.out.println("Received move " + piece + " from " + start + " to " + end);
 
         String color = piece.substring(0, 1);
         if(color.equals("w")) {
-            return true;
+            return "legal";
         }
         else {
-            return false;
+            return "illegal";
         }
 
     }

@@ -31,7 +31,7 @@ public class HelloController {
 
     @RequestMapping(value="/makeMove.htm",method= RequestMethod.POST)
     public @ResponseBody
-    boolean makeMove(@RequestParam Map<String, String> params) {
+    String makeMove(@RequestParam Map<String, String> params) {
 
         String startSquare = params.get("startSquare");
         String endSquare = params.get("endSquare");
@@ -43,7 +43,7 @@ public class HelloController {
         System.out.println("test");
         System.out.println("piece: " + piece);
 
-        boolean isLegal = LegalMoveService.isThisMoveLegal(startSquare, endSquare, piece);
+        String isLegal = LegalMoveService.isThisMoveLegal(startSquare, endSquare, piece);
 
         System.out.println("isLegal: " + isLegal);
 

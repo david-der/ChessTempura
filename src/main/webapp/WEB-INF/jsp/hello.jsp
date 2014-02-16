@@ -188,40 +188,30 @@
 
         var clickCount = 0;
         var isPieceHighlighted = false;
-        var isWhitesTurn = true;
         var highlightedPiece;
         var start = null;
         var end = null;
 		var piece = null;
-        
+        var legalMove = false;
+        var square = null;
+
         $('#chess-board td').click(function() {
             if (isPieceHighlighted)
                 clickCount++;
 
             if (clickCount <= 1) {
                 start = $(this).attr("id");
-                //alert('td ' + piece)
-                return false;
             } else {
+                square = this;
                 end = $(this).attr("id");
-                var isLegal = sendMoveToServer(start, end, piece);
-                if (! isLegal){
-                    // rollback the move that just was attempted
-                }
-                if(isWhitesTurn == true) {
-                	isWhitesTurn == false;
-                } else {
-                	isWhitesTurn == true;
-                }
-                $(this).append(highlightedPiece);
-                console.log('Ok, just clicked a piece and a square');
+                sendMoveToServer(start, end, piece, this);
+                console.log('Ok5, just clicked a piece and a square');
             }
         });
 
         $('#chess-board img').click(function() {
             // Unhighlight all the images
             $('#chess-board img').removeClass('highlighted');
-            //alert('img ' + piece)
 
             if (! (this == highlightedPiece)) {
                 // Highlight the newly selected image
@@ -231,27 +221,48 @@
                 highlightedPiece = this;
                 console.log('different piece');
             } else {
-                start = null;
-                highlightedPiece = null;
-                clickCount = 0;
-                isPieceHighlighted = false;
+                resetVars();
                 console.log('same piece');
             }
         });
 
-        function sendMoveToServer(start, end, p) {
+        function sendMoveToServer(start, end, p, sq) {
             $.ajax({
                 type: "POST",
                 url: "/makeMove.htm",
-                data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p,
+                data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p + "&square=" + sq,
                 success: function(response){
                     // we have the response
                     console.log("YES: " + response);
+                    if(response == "illegal") {
+                        console.log('if statement, illegal ' + response);
+                        //legal_move = false;
+                        $('#chess-board img').removeClass('highlighted');
+                        clickCount = 0;
+                    }
+                    else {
+                        console.log('if statement, legal ' + response);
+                        //legal_move = true;
+                        $(sq).append(highlightedPiece);
+                        $('#chess-board img').removeClass('highlighted');
+                        clickCount = 0;
+                    }
                 },
                 error: function(e){
-                    alert('Error in send move to server: ' + start + end + piece);
+                    alert('Error in send move to server: ' + start + end + p);
                 }
             });
+            //return legal_move;
+        }
+
+        function resetVars() {
+            clickCount = 0;
+            isPieceHighlighted = false;
+            highlightedPiece = null;
+            start = null;
+            end = null;
+            piece = null;
+            $('#chess-board img').removeClass('highlighted');
         }
         
         <%--function makeTableHTML(myArray) {
