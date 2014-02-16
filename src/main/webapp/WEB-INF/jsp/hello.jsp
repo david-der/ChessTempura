@@ -195,6 +195,8 @@
         var legalMove = false;
         var square = null;
 
+        initializeBoard();
+
         $('#chess-board td').click(function() {
             if (isPieceHighlighted)
                 clickCount++;
@@ -225,6 +227,22 @@
                 console.log('same piece');
             }
         });
+
+        function initializeBoard() {
+            $.ajax({
+                type: "POST",
+                url: "/initializeBoard.htm",
+                //data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p + "&square=" + sq,
+                success: function(response){
+                    // we have the response
+                    console.log("initializeBoard");
+                },
+                error: function(e){
+                    alert('Error in initializeBoard');
+                }
+            });
+            //return legal_move;
+        }
 
         function sendMoveToServer(start, end, p, sq) {
             $.ajax({

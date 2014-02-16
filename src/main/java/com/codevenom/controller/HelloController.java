@@ -1,6 +1,8 @@
 package com.codevenom.controller;
 
+import com.codevenom.Board;
 import com.codevenom.service.LegalMoveService;
+
 import com.firebase.client.Firebase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +51,16 @@ public class HelloController {
 
 
         return isLegal;
+    }
+
+    @RequestMapping(value="/initializeBoard.htm",method= RequestMethod.POST)
+    public @ResponseBody
+    String initializeBoard(@RequestParam Map<String, String> params) {
+
+        Board board = new Board();
+
+        return "initialized";
+
     }
 
 }

@@ -1,3 +1,5 @@
+package com.codevenom;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -5,13 +7,28 @@ import java.util.HashSet;
 
 public class Board {
 
-	Board() {
+	public Board() {
 	}
 
+    public static int row(String square) { //for example, square="e2"
+        return Integer.valueOf(square.substring(1,2));
+    }
+    public static int col(String square) {
+        if(square.substring(0,1).equals("a")) { return 1; }
+        if(square.substring(0,1).equals("b")) { return 2; }
+        if(square.substring(0,1).equals("c")) { return 3; }
+        if(square.substring(0,1).equals("d")) { return 4; }
+        if(square.substring(0,1).equals("e")) { return 5; }
+        if(square.substring(0,1).equals("f")) { return 6; }
+        if(square.substring(0,1).equals("g")) { return 7; }
+        if(square.substring(0,1).equals("h")) { return 8; }
+        return 0;
+    }
 
-	public Piece[][] startingBoard() {
 
-		Piece[][] board = getEmptyBoard();
+	public static Piece[][] startingBoard() {
+
+		Piece[][] board = new Piece[9][9];
 
 		//black pieces
 		board[1][1]= new Piece("bRook");
@@ -50,9 +67,29 @@ public class Board {
 		board[8][7]= new Piece("wKnight");
 		board[8][8]= new Piece("wRook");
 
+        board[0][0]= new Piece();
+        board[0][1]= new Piece();
+        board[0][2]= new Piece();
+        board[0][3]= new Piece();
+        board[0][4]= new Piece();
+        board[0][5]= new Piece();
+        board[0][6]= new Piece();
+        board[0][7]= new Piece();
+        board[0][8]= new Piece();
+        board[1][0]= new Piece();
+        board[2][0]= new Piece();
+        board[3][0]= new Piece();
+        board[4][0]= new Piece();
+        board[5][0]= new Piece();
+        board[6][0]= new Piece();
+        board[7][0]= new Piece();
+        board[8][0]= new Piece();
+
+
 		return board;
 	}
 
+    /*
 	public void printBoard(Piece[][] board) {
 
 		for(int r=0; r<11; ++r) {
@@ -257,5 +294,6 @@ public class Board {
 		
 		return (r % 8) + 1;
 	}
-	
+
+	*/
 }
