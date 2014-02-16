@@ -37,6 +37,7 @@ public class HelloController {
         String endSquare = params.get("endSquare");
         String piece = params.get("piece");
 
+        System.out.println("test1");
         System.out.println("Start square: " + startSquare);
         System.out.println("End square: " + endSquare);
         System.out.println("test");
