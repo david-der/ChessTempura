@@ -31,41 +31,41 @@ public class Board {
 		Piece[][] board = new Piece[9][9];
 
 		//black pieces
-		board[1][1]= new Piece("bRook");
-		board[1][2]= new Piece("bKnight");
-		board[1][3]= new Piece("bBishop");
-		board[1][4]= new Piece("bKing");
-		board[1][5]= new Piece("bQueen");
-		board[1][6]= new Piece("bBishop");
-		board[1][7]= new Piece("bKnight");
-		board[1][8]= new Piece("bRook");
+		board[1][1]= new Piece("wRook");
+		board[1][2]= new Piece("wKnight");
+		board[1][3]= new Piece("wBishop");
+		board[1][4]= new Piece("wQueen");
+		board[1][5]= new Piece("wKing");
+		board[1][6]= new Piece("wBishop");
+		board[1][7]= new Piece("wKnight");
+		board[1][8]= new Piece("wRook");
 		//black pawns
-		board[2][1]= new Piece("bPawn");
-		board[2][2]= new Piece("bPawn");
-		board[2][3]= new Piece("bPawn");
-		board[2][4]= new Piece("bPawn");
-		board[2][5]= new Piece("bPawn");
-		board[2][6]= new Piece("bPawn");
-		board[2][7]= new Piece("bPawn");
-		board[2][8]= new Piece("bPawn");
+		board[2][1]= new Piece("wPawn");
+		board[2][2]= new Piece("wPawn");
+		board[2][3]= new Piece("wPawn");
+		board[2][4]= new Piece("wPawn");
+		board[2][5]= new Piece("wPawn");
+		board[2][6]= new Piece("wPawn");
+		board[2][7]= new Piece("wPawn");
+		board[2][8]= new Piece("wPawn");
 		//white pawns
-		board[7][1]= new Piece("wPawn");
-		board[7][2]= new Piece("wPawn");
-		board[7][3]= new Piece("wPawn");
-		board[7][4]= new Piece("wPawn");
-		board[7][5]= new Piece("wPawn");
-		board[7][6]= new Piece("wPawn");
-		board[7][7]= new Piece("wPawn");
-		board[7][8]= new Piece("wPawn");
+		board[7][1]= new Piece("bPawn");
+		board[7][2]= new Piece("bPawn");
+		board[7][3]= new Piece("bPawn");
+		board[7][4]= new Piece("bPawn");
+		board[7][5]= new Piece("bPawn");
+		board[7][6]= new Piece("bPawn");
+		board[7][7]= new Piece("bPawn");
+		board[7][8]= new Piece("bPawn");
 		//white pieces
-		board[8][1]= new Piece("wRook");
-		board[8][2]= new Piece("wKnight");
-		board[8][3]= new Piece("wBishop");
-		board[8][4]= new Piece("wQueen");
-		board[8][5]= new Piece("wKing");
-		board[8][6]= new Piece("wBishop");
-		board[8][7]= new Piece("wKnight");
-		board[8][8]= new Piece("wRook");
+		board[8][1]= new Piece("bRook");
+		board[8][2]= new Piece("bKnight");
+		board[8][3]= new Piece("bBishop");
+		board[8][4]= new Piece("bQueen");
+		board[8][5]= new Piece("bKing");
+		board[8][6]= new Piece("bBishop");
+		board[8][7]= new Piece("Knight");
+		board[8][8]= new Piece("bwRook");
 
         board[0][0]= new Piece();
         board[0][1]= new Piece();
@@ -84,6 +84,12 @@ public class Board {
         board[6][0]= new Piece();
         board[7][0]= new Piece();
         board[8][0]= new Piece();
+
+        for(int row=3; row<=6; ++row) {
+            for(int col=1; col<=8; ++col) {
+                board[row][col] = new Piece();
+            }
+        }
 
 
 		return board;

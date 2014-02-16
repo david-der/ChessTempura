@@ -41,11 +41,15 @@ public class LegalMoveService {
         System.out.println("old square integers:" + oldCol + " " + oldRow);
         System.out.println("new square integers:" + newCol + " " + newRow);
 
+        //Piece newpiece = new Piece();
+        //newpiece = board[newRow][newCol];
+        //System.out.println("new " + newpiece.fullName);
+
         //can't take your own piece
-        if(isWhitesTurn && board[oldRow][oldCol].color.equals("white")) {
+        if(isWhitesTurn && board[newRow][newCol].color.equals("white")) {
             return "illegal";
         }
-        if(!isWhitesTurn && board[oldRow][oldCol].color.equals("black")) {
+        if(!isWhitesTurn && board[newRow][newCol].color.equals("black")) {
             return "illegal";
         }
 
@@ -90,7 +94,66 @@ public class LegalMoveService {
             }
         }
         else if(p.name1.equals("p")) {//pawns are the tricky pieces
-
+            if(p.color.equals("white")) {
+                if( abs(newCol-oldCol) > 1 ) {
+                    System.out.println("illegal pawn move. too far horizontally");
+                    return "illegal";
+                }
+                else if( abs(newCol-oldCol) == 1 && !board[newRow][newCol].color.equals("black") ) {
+                    System.out.println("illegal pawn move. can't change column if not attacking");
+                    return "illegal";
+                }
+                else if( abs(newCol-oldCol) == 0 && board[newRow][newCol].color.equals("black") ) {
+                    System.out.println("illegal pawn move. can't attack straight");
+                    return "illegal";
+                }
+                else if( newRow - oldRow < 0 ) {
+                    System.out.println("illegal pawn move. backwards");
+                    return "illegal";
+                }
+                else if( newRow - oldRow > 2) {
+                    System.out.println("illegal pawn move. too far");
+                    return "illegal";
+                }
+                else if(oldRow != 2 && abs(newRow - oldRow) == 2) {
+                    System.out.println("illegal pawn move. can only move 2 spaces from starting square");
+                    return "illegal";
+                }
+                else if(board[newRow][newCol].color.equals("black") && ( abs(newCol-oldCol) != 1 || newRow-oldRow != 1  )  ) {
+                    System.out.println("illegal pawn move. incorrect attack");
+                    return "illegal";
+                }
+            }
+            else if(p.color.equals("black")) {
+                if( abs(newCol-oldCol) > 1 ) {
+                    System.out.println("illegal pawn move. too far horizontally");
+                    return "illegal";
+                }
+                else if( abs(newCol-oldCol) == 1 && !board[newRow][newCol].color.equals("white") ) {
+                    System.out.println("illegal pawn move. can't change column if not attacking");
+                    return "illegal";
+                }
+                else if( abs(newCol-oldCol) == 0 && board[newRow][newCol].color.equals("white") ) {
+                    System.out.println("illegal pawn move. can't attack straight");
+                    return "illegal";
+                }
+                else if( oldRow - newRow < 0 ) {
+                    System.out.println("illegal pawn move. backwards");
+                    return "illegal";
+                }
+                else if( oldRow - newRow > 2) {
+                    System.out.println("illegal pawn move. too far");
+                    return "illegal";
+                }
+                else if(oldRow != 7 && abs(newRow - oldRow) == 2) {
+                    System.out.println("illegal pawn move. can only move 2 spaces from starting square");
+                    return "illegal";
+                }
+                else if(board[newRow][newCol].color.equals("white") && ( abs(newCol-oldCol) != 1 || oldRow-newRow != 1  )  ) {
+                    System.out.println("illegal pawn move. incorrect attack");
+                    return "illegal";
+                }
+            }
 
         }
 

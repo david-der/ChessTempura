@@ -13,14 +13,20 @@ public class Piece {
 	Piece() {
 		this.name1 = " ";
         this.fullName = "empty";
+        this.color = "none";
+        this.value = 0;
 	}
+
+    Piece(Piece current) {
+        this.name1 = current.name1;
+        this.fullName = current.fullName;
+        this.color = current.color;
+        this.value = current.value;
+    }
 
 	Piece(String pieceName) {
 		this.fullName = pieceName;
-		if( pieceName.length() == 1 ) { //a-h, 1-8 row/column labels
-			this.name1 = pieceName;
-		}
-		else if(pieceName.equals("wKing")) {
+		if(pieceName.equals("wKing")) {
 			this.color = "white";
 			this.name1 = "K";
 			this.value = 9999;
