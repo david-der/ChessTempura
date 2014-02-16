@@ -246,7 +246,7 @@
                 data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p,
                 success: function(response){
                     // we have the response
-                    console.log("YES");
+                    console.log("YES: " + response);
                 },
                 error: function(e){
                     alert('Error in send move to server: ' + start + end + piece);
