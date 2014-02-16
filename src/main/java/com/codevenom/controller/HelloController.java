@@ -1,6 +1,6 @@
 package com.codevenom.controller;
 
-import com.codevenom.Board;
+import com.codevenom.service.Board;
 import com.codevenom.service.LegalMoveService;
 
 import com.firebase.client.Firebase;
