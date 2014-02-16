@@ -8,7 +8,16 @@ package com.codevenom.service;
  */
 public class LegalMoveService {
 
-    public static boolean isThisMoveLegal(Object boardState, Object move) {
-        return true;
+    public static boolean isThisMoveLegal(String start, String end, String piece) {
+        System.out.println("Received move " + piece + " from " + start + " to " + end);
+
+        String color = piece.substring(0, 1);
+        if(color.equals("w")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 }
