@@ -27,6 +27,7 @@ public class LegalMoveService {
         //System.out.println("new square integers:" + newCol + " " + newRow);
 
         String moveType = "legal";   //the end of this function returns moveType
+        /////////// possible values:
         //legal
         //white_kingside_castle
         //white_queenside_castle
@@ -263,7 +264,7 @@ public class LegalMoveService {
 
         } //pawn move
 
-        if(!isClearPath(start, end, p.name1)) { //incomplete
+        if(!isClearPath(start, end, p.name1)) {
             return "illegal";
         }
 
@@ -334,7 +335,7 @@ public class LegalMoveService {
                     Piece p = board[col][row];
                     if(p.fullName.equals("wKing")) {
                         end_king_square = Board.square(col,row);
-                        System.out.println("found wKing on " + end_king_square);
+                        //System.out.println("found wKing on " + end_king_square);
                     }
                 }
             }
@@ -349,6 +350,7 @@ public class LegalMoveService {
                         if(!moveType.equals("illegal")) {
                             System.out.println(start + " " + piece_name + " \t: wKing " + end_king_square + " \t CHECK!");
                             Board.whiteInCheck = true;
+                            isCheckMate();
                             return "check";
                         }
                     }
@@ -364,7 +366,7 @@ public class LegalMoveService {
                     Piece p = board[col][row];
                     if(p.fullName.equals("bKing")) {
                         end_king_square = Board.square(col,row);
-                        System.out.println("found bKing on " + end_king_square);
+                        //System.out.println("found bKing on " + end_king_square);
                     }
                 }
             }
@@ -378,8 +380,8 @@ public class LegalMoveService {
                         String moveType = isThisMoveLegal(start, end_king_square, piece_name, true);
                         if(!moveType.equals("illegal")) {
                             System.out.println(start + " " + piece_name + " \t: bKing " + end_king_square + " \t CHECK!");
-                            System.out.println("========== bKing is in Check =========");
                             Board.blackInCheck = true;
+                            isCheckMate();
                             return "check";
                         }
                     }
@@ -392,6 +394,40 @@ public class LegalMoveService {
         Board.blackInCheck = false;
 
         return "no_check";
+    }
+
+    public static String isCheckMate() {
+
+        isWhitesTurn = !isWhitesTurn;
+
+        //for all pieces
+        //nest: for all squares on board (16*64 = 1024 possibilities)
+        //could be smarter about it, like king is only allowed to move 1 square
+        String start = "";
+        String end = "";
+        for(int col=1; col<=8; ++col) {
+            for(int row=1; row<=8; ++row) {
+                Piece p = board[col][row];
+                start = Board.square(col,row);
+
+                for(int c=1; c<=8; ++c) {
+                    for(int r=1; r<=8; ++r) {
+                        end = Board.square(c, r);
+                        String moveType = isThisMoveLegal(start, end, p.fullName, true);
+                        if(!moveType.equals("illegal")) {
+                            System.out.println("can escape check with " + start + end + " " + p.fullName);
+                            isWhitesTurn = !isWhitesTurn;
+                            return "check";
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("=======================");
+        System.out.println("====  Check Mate  =====");
+        System.out.println("=======================");
+
+        return "checkmate";
     }
 
     private static boolean isClearPath(String start, String end, String p) {
