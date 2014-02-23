@@ -6,7 +6,7 @@ public class Piece {
 
 	public String color = "";
     public String name1 = "";
-    public String fullName = "";
+    public String fullName = "empty";
     public int value = 0;
 
 

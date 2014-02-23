@@ -20,15 +20,18 @@ public class LegalMoveService {
         //There are many ways a move can be illegal.
         //Only return "legal" if the move passes all the illegal filters.
 
+        System.out.println("white's turn? " + isWhitesTurn);
 
         String color = piece.substring(0, 1);
         if(isWhitesTurn) {
             if(color.equals("b")) {
+                System.out.println("white to move.");
                 return "illegal";
             }
         }
         else if(!isWhitesTurn) {
             if(color.equals("w")) {
+                System.out.println("black to move.");
                 return "illegal";
             }
         }
@@ -155,8 +158,11 @@ public class LegalMoveService {
                 }
             }
 
-        }
+        } //pawn check
 
+        if(!isClearPath(start, end, p.name1)) { //incomplete
+            return "illegal";
+        }
 
 
 
@@ -169,6 +175,206 @@ public class LegalMoveService {
         isWhitesTurn = !isWhitesTurn;
         return "legal";
     }
+
+    private static boolean isClearPath(String start, String end, String p) {
+        int oldCol = Board.col(start);
+        int oldRow = Board.row(start);
+        int newCol = Board.col(end);
+        int newRow = Board.row(end);
+
+        //not relevant for King, which is only a capture or self-obstruction
+
+        //not relevant for Knight
+
+    //bishop down right
+        //black rook, why does color matter?
+
+
+        //Rook
+        if(p.equals("R")) {
+            if(newRow > oldRow) { //up
+                for(int i=oldRow+1; i<newRow; ++i) {
+                    System.out.println("rook path up: " + newCol + i + " " + board[i][newCol].fullName);
+                    if(!board[i][newCol].fullName.equals("empty")){
+                        return false;
+                    }
+                }
+            }
+            else if(oldRow > newRow) { //down
+                for(int i=oldRow-1; i>newRow; --i) {
+                    System.out.println("rook path down: " + newCol + i + " " + board[i][newCol].fullName);
+                    if(!board[i][newCol].fullName.equals("empty")){
+                        return false;
+                    }
+                }
+            }
+            else if(oldCol > newCol) { //left
+                for(int i=oldCol-1; i>newCol; --i) {
+                    System.out.println("rook path left: " + newCol + i + " " + board[newRow][i].fullName);
+                    if(!board[newRow][i].fullName.equals("empty")){
+                        return false;
+                    }
+                }
+            }
+            else if(newCol > oldCol) { //right
+                for(int i=oldCol+1; i<newCol; ++i) {
+                    System.out.println("rook path right: " + newCol + i + " " + board[newRow][i].fullName);
+                    if(!board[newRow][i].fullName.equals("empty")){
+                        return false;
+                    }
+                }
+            }
+        }
+        else if(p.equals("B")){
+            if(newRow > oldRow && newCol > oldCol) { //up-right, row increasing, column increasing
+                int pathRow = oldRow+1;
+                for(int i=oldCol+1; i<newCol; ++i) {
+                    System.out.println("bishop path up-right: " + i + pathRow + " " + board[pathRow][i].fullName);
+                    if(!board[pathRow][i].fullName.equals("empty")){
+                        return false;
+                    }
+                    pathRow++;
+                }
+            }
+            else if(newRow > oldRow && oldCol > newCol) { //up-left: row increasing, column decreasing
+                int pathRow = oldRow+1;
+                for(int i=oldCol-1; i>newCol; --i) {
+                    System.out.println("bishop path up-left: " + i + pathRow + " " + board[pathRow][i].fullName);
+                    if(!board[pathRow][i].fullName.equals("empty")){
+                        return false;
+                    }
+                    pathRow++;
+                }
+            }
+            else if(oldRow > newRow && newCol > oldCol) { //down-right, row decreasing, column increasing
+                int pathRow = oldRow-1;
+                for(int i=oldCol+1; i<newCol; ++i) {
+                    System.out.println("bishop path down-right: " + i + pathRow + " " + board[pathRow][i].fullName);
+                    if(!board[pathRow][i].fullName.equals("empty")){
+                        return false;
+                    }
+                    pathRow--;
+                }
+            }
+            else if(oldRow > newRow && oldCol > newCol) { //down-left
+                int pathRow = oldRow-1;
+                for(int i=oldCol-1; i>newCol; --i) {
+                    System.out.println("bishop path down-left: " + i + pathRow + " " + board[pathRow][i].fullName);
+                    if(!board[pathRow][i].fullName.equals("empty")){
+                        return false;
+                    }
+                    pathRow--;
+                }
+            }
+        }
+        else if(p.equals("Q")) {
+            int changeCol = abs(newCol - oldCol);
+            int changeRow = abs(newRow - oldRow);
+            if( changeCol > 0 && changeRow > 0) {
+                //Bishop rules for queen
+                if(newRow > oldRow && newCol > oldCol) { //up-right, row increasing, column increasing
+                    int pathRow = oldRow+1;
+                    for(int i=oldCol+1; i<newCol; ++i) {
+                        System.out.println("queen path up-right: " + i + pathRow + " " + board[pathRow][i].fullName);
+                        if(!board[pathRow][i].fullName.equals("empty")){
+                            return false;
+                        }
+                        pathRow++;
+                    }
+                }
+                else if(newRow > oldRow && oldCol > newCol) { //up-left: row increasing, column decreasing
+                    int pathRow = oldRow+1;
+                    for(int i=oldCol-1; i>newCol; --i) {
+                        System.out.println("queen path up-left: " + i + pathRow + " " + board[pathRow][i].fullName);
+                        if(!board[pathRow][i].fullName.equals("empty")){
+                            return false;
+                        }
+                        pathRow++;
+                    }
+                }
+                else if(oldRow > newRow && newCol > oldCol) { //down-right, row decreasing, column increasing
+                    int pathRow = oldRow-1;
+                    for(int i=oldCol+1; i<newCol; ++i) {
+                        System.out.println("queen path down-right: " + i + pathRow + " " + board[pathRow][i].fullName);
+                        if(!board[pathRow][i].fullName.equals("empty")){
+                            return false;
+                        }
+                        pathRow--;
+                    }
+                }
+                else if(oldRow > newRow && oldCol > newCol) { //down-left
+                    int pathRow = oldRow-1;
+                    for(int i=oldCol-1; i>newCol; --i) {
+                        System.out.println("queen path down-left: " + i + pathRow + " " + board[pathRow][i].fullName);
+                        if(!board[pathRow][i].fullName.equals("empty")){
+                            return false;
+                        }
+                        pathRow--;
+                    }
+                }
+            }
+            else {
+                //Rook rules for queen
+                if(newRow > oldRow) { //up
+                    for(int i=oldRow+1; i<newRow; ++i) {
+                        System.out.println("queen path up: " + newCol + i + " " + board[i][newCol].fullName);
+                        if(!board[i][newCol].fullName.equals("empty")){
+                            return false;
+                        }
+                    }
+                }
+                else if(oldRow > newRow) { //down
+                    for(int i=oldRow-1; i>newRow; --i) {
+                        System.out.println("queen path down: " + newCol + i + " " + board[i][newCol].fullName);
+                        if(!board[i][newCol].fullName.equals("empty")){
+                            return false;
+                        }
+                    }
+                }
+                else if(oldCol > newCol) { //left
+                    for(int i=oldCol-1; i>newCol; --i) {
+                        System.out.println("queen path left: " + newCol + i + " " + board[newRow][i].fullName);
+                        if(!board[newRow][i].fullName.equals("empty")){
+                            return false;
+                        }
+                    }
+                }
+                else if(newCol > oldCol) { //right
+                    for(int i=oldCol+1; i<newCol; ++i) {
+                        System.out.println("queen path right: " + newCol + i + " " + board[newRow][i].fullName);
+                        if(!board[newRow][i].fullName.equals("empty")){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        else if(p.equals("p")){
+            //pawn
+            if(abs(newRow-oldRow) == 2) {
+                if(newRow > oldRow) { //up
+                    for(int i=oldRow+1; i<newRow; ++i) {
+                        System.out.println("pawn path 2 up: " + newCol + i + " " + board[i][newCol].fullName);
+                        if(!board[i][newCol].fullName.equals("empty")){
+                            return false;
+                        }
+                    }
+                }
+                else if(oldRow > newRow) { //down
+                    for(int i=oldRow-1; i>newRow; --i) {
+                        System.out.println("pawn path 2 down: " + newCol + i + " " + board[i][newCol].fullName);
+                        if(!board[i][newCol].fullName.equals("empty")){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+
 
     private static int abs(int x) {
         if (x < 0) {

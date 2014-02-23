@@ -64,8 +64,8 @@ public class Board {
 		board[8][4]= new Piece("bQueen");
 		board[8][5]= new Piece("bKing");
 		board[8][6]= new Piece("bBishop");
-		board[8][7]= new Piece("Knight");
-		board[8][8]= new Piece("bwRook");
+		board[8][7]= new Piece("bKnight");
+		board[8][8]= new Piece("bRook");
 
         board[0][0]= new Piece();
         board[0][1]= new Piece();
