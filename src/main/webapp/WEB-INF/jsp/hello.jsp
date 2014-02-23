@@ -269,7 +269,8 @@
                         $(sq).append(highlightedPiece);
                         $('#chess-board img').removeClass('highlighted');
                         resetVars();
-                        isCheck();  //after a successful move, see if the king is in check
+                        //isCheck();  //after a successful move, see if the king is in check
+                        //isCheckMate();
                     }
                 },
                 error: function(e){
@@ -303,6 +304,18 @@
                 },
                 error: function(e){
                     alert('Error in isCheck');
+                }
+            });
+        }
+        function isCheckMate() {
+            $.ajax({
+                type: "POST",
+                url: "/isCheckMate.htm",
+                success: function(response){
+                    //console.log("success in isCheckMate");
+                },
+                error: function(e){
+                    alert('Error in isCheckMate');
                 }
             });
         }

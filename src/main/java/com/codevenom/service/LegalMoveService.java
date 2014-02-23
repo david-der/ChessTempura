@@ -12,6 +12,7 @@ package com.codevenom.service;
 public class LegalMoveService {
 
     private static boolean isWhitesTurn = true;
+    private static boolean lookingForMate = false;
     private static Piece[][] board = Board.startingBoard();
 
     public static String isThisMoveLegal(String start, String end, String piece, boolean checkOnly) {
@@ -320,6 +321,15 @@ public class LegalMoveService {
             p.hasMoved = true;
         }
 
+        if(! checkOnly ) {
+            String is_check = isCheck();
+            System.out.println("is_check: " + is_check);
+            if(is_check.equals("check")) {
+                String is_check_mate = isCheckMate();
+                System.out.println("is_check_mate: " + is_check_mate);
+            }
+        }
+
 
         return moveType;
     }
@@ -350,7 +360,6 @@ public class LegalMoveService {
                         if(!moveType.equals("illegal")) {
                             System.out.println(start + " " + piece_name + " \t: wKing " + end_king_square + " \t CHECK!");
                             Board.whiteInCheck = true;
-                            isCheckMate();
                             return "check";
                         }
                     }
@@ -381,7 +390,6 @@ public class LegalMoveService {
                         if(!moveType.equals("illegal")) {
                             System.out.println(start + " " + piece_name + " \t: bKing " + end_king_square + " \t CHECK!");
                             Board.blackInCheck = true;
-                            isCheckMate();
                             return "check";
                         }
                     }
@@ -390,15 +398,31 @@ public class LegalMoveService {
 
 
         }
+        //if(! lookingForMate) {
+        System.out.println("reseting, nobody in check");
         Board.whiteInCheck = false;
         Board.blackInCheck = false;
 
         return "no_check";
+        //}
+
+        //return "check";
     }
 
     public static String isCheckMate() {
-
-        isWhitesTurn = !isWhitesTurn;
+        System.out.println("in isCheckMate()");
+        if(Board.whiteInCheck) {
+            System.out.println("is white in checkmate?");
+            isWhitesTurn = true;
+        }
+        else if(Board.blackInCheck) {
+            System.out.println("is black in checkmate?");
+            isWhitesTurn = false;
+        }
+        else {
+            System.out.println("Nobody in check: " + Board.whiteInCheck + " " + Board.blackInCheck);
+            return "not_checkmate";
+        }
 
         //for all pieces
         //nest: for all squares on board (16*64 = 1024 possibilities)
@@ -408,16 +432,33 @@ public class LegalMoveService {
         for(int col=1; col<=8; ++col) {
             for(int row=1; row<=8; ++row) {
                 Piece p = board[col][row];
-                start = Board.square(col,row);
+                if( (Board.whiteInCheck && p.color.equals("white")) || (Board.blackInCheck && p.color.equals("black"))) {
+                    start = Board.square(col,row);
 
-                for(int c=1; c<=8; ++c) {
-                    for(int r=1; r<=8; ++r) {
-                        end = Board.square(c, r);
-                        String moveType = isThisMoveLegal(start, end, p.fullName, true);
-                        if(!moveType.equals("illegal")) {
-                            System.out.println("can escape check with " + start + end + " " + p.fullName);
-                            isWhitesTurn = !isWhitesTurn;
-                            return "check";
+                    for(int c=1; c<=8; ++c) {
+                        for(int r=1; r<=8; ++r) {
+                            end = Board.square(c, r);
+                            String moveType = isThisMoveLegal(start, end, p.fullName, true);
+
+                            //if it's a legal move, make the move and see if it relieves check
+                            if(!moveType.equals("illegal")) {
+                                Piece previous_new = board[c][r];
+                                board[c][r] = board[col][row];
+                                board[col][row] = previous_new;
+
+                                //lookingForMate = true;
+                                String resultIsCheck = isCheck();
+                                //lookingForMate = false;
+
+                                previous_new = board[c][r];
+                                board[c][r] = board[col][row];
+                                board[col][row] = previous_new;
+
+                                if(! resultIsCheck.equals("check")) {
+                                    System.out.println("can escape check with " + start + end + " " + p.fullName);
+                                    return "not_checkmate";
+                                }
+                            }
                         }
                     }
                 }

@@ -50,6 +50,12 @@ public class HelloController {
         String is_check = LegalMoveService.isCheck();
         return is_check;
     }
+    @RequestMapping(value="/isCheckMate.htm",method= RequestMethod.POST)
+    public @ResponseBody
+    String isCheckMate(@RequestParam Map<String, String> params) {
+        String is_check_mate = LegalMoveService.isCheckMate();
+        return is_check_mate;
+    }
 
     @RequestMapping(value="/initializeBoard.htm",method= RequestMethod.POST)
     public @ResponseBody
