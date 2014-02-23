@@ -268,6 +268,26 @@ public class LegalMoveService {
         }
 
 
+        //cannot move into Check
+        //make move, look for Check, unmake move.  if legal, move will be made at the bottom of the function
+        if(! checkOnly) {
+
+            Piece previous_new = board[newCol][newRow];
+            board[newCol][newRow] = board[oldCol][oldRow];
+            board[oldCol][oldRow] = previous_new;
+
+            String resultIsCheck = isCheck();
+
+            previous_new = board[newCol][newRow];
+            board[newCol][newRow] = board[oldCol][oldRow];
+            board[oldCol][oldRow] = previous_new;
+
+            if(resultIsCheck.equals("check")) {
+                return "illegal";
+            }
+        }
+
+
         //if white's turn, and white is in check, a legal move must relieve the check
         if(! checkOnly) {
             if(  (Board.whiteInCheck && isWhitesTurn) || (Board.blackInCheck && !isWhitesTurn) ) {
