@@ -20,8 +20,6 @@ public class LegalMoveService {
         //There are many ways a move can be illegal.
         //Only return "legal" if the move passes all the illegal filters.
 
-        System.out.println("white's turn? " + isWhitesTurn);
-
         String color = piece.substring(0, 1);
         if(isWhitesTurn) {
             if(color.equals("b")) {
@@ -44,9 +42,7 @@ public class LegalMoveService {
         System.out.println("old square integers:" + oldCol + " " + oldRow);
         System.out.println("new square integers:" + newCol + " " + newRow);
 
-        //Piece newpiece = new Piece();
-        //newpiece = board[newRow][newCol];
-        //System.out.println("new " + newpiece.fullName);
+
 
         //can't take your own piece
         if(isWhitesTurn && board[newRow][newCol].color.equals("white")) {
@@ -58,6 +54,7 @@ public class LegalMoveService {
 
         Piece p = board[oldRow][oldCol];
 
+        boolean thisMoveIsCastle = false;
         if(p.name1.equals("K")) {
             //castling
             if(color.equals("w")) {
@@ -75,7 +72,9 @@ public class LegalMoveService {
                         return "illegal";
                     }
                     System.out.println("legal white castle");
-                    return "legal";
+                    board[1][6] = board[1][8]; //move rook
+                    board[1][8] = new Piece(); //empty
+                    thisMoveIsCastle = true;
                 }
                 else if(start.equals("e1") && end.equals("c1")) { //queenside castle
                     if(!board[1][2].fullName.equals("empty") || !board[1][3].fullName.equals("empty") || !board[1][4].fullName.equals("empty") ) {
@@ -91,7 +90,9 @@ public class LegalMoveService {
                         return "illegal";
                     }
                     System.out.println("legal white castle");
-                    return "legal";
+                    board[1][4] = board[1][1]; //move rook
+                    board[1][1] = new Piece(); //empty
+                    thisMoveIsCastle = true;
                 }
             }
             else if(color.equals("b")) {
@@ -109,7 +110,9 @@ public class LegalMoveService {
                         return "illegal";
                     }
                     System.out.println("legal black castle");
-                    return "legal";
+                    board[8][6] = board[8][8]; //move rook
+                    board[8][8] = new Piece(); //empty
+                    thisMoveIsCastle = true;
                 }
                 else if(start.equals("e8") && end.equals("c8")) { //queenside castle
                     if(!board[8][2].fullName.equals("empty") || !board[8][3].fullName.equals("empty") || !board[8][4].fullName.equals("empty") ) {
@@ -125,15 +128,18 @@ public class LegalMoveService {
                         return "illegal";
                     }
                     System.out.println("legal black castle");
-                    return "legal";
+                    board[8][4] = board[8][1]; //move rook
+                    board[8][1] = new Piece(); //empty
+                    thisMoveIsCastle = true;
                 }
             }
 
             //regular king move
-            //won't be evaluated if successful castle, because a castle breaks this >1 square rule
-            if( abs(newCol-oldCol) > 1 || abs(newRow-oldRow) > 1) {
-                System.out.println("illegal King move");
-                return "illegal";
+            if(!thisMoveIsCastle) {
+                if( abs(newCol-oldCol) > 1 || abs(newRow-oldRow) > 1) {
+                    System.out.println("illegal King move");
+                    return "illegal";
+                }
             }
         }
         else if(p.name1.equals("R")) {
@@ -198,6 +204,9 @@ public class LegalMoveService {
                     System.out.println("illegal pawn move. incorrect attack");
                     return "illegal";
                 }
+                if(newRow == 8) {
+                    p = new Piece("wQueen"); //pawn promotion
+                }
             }
             else if(p.color.equals("black")) {
                 if( abs(newCol-oldCol) > 1 ) {
@@ -228,14 +237,16 @@ public class LegalMoveService {
                     System.out.println("illegal pawn move. incorrect attack");
                     return "illegal";
                 }
+                if(newRow == 1) {
+                    p = new Piece("bQueen"); //pawn promotion
+                }
             }
 
-        } //pawn check
+        } //pawn move
 
         if(!isClearPath(start, end, p.name1)) { //incomplete
             return "illegal";
         }
-
 
 
         //passed all the illegal move filters
@@ -243,9 +254,15 @@ public class LegalMoveService {
         Piece previous_new = board[newRow][newCol];
         board[newRow][newCol] = board[oldRow][oldCol];
         board[oldRow][oldCol] = previous_new;
-
         isWhitesTurn = !isWhitesTurn;
         p.hasMoved = true;
+
+
+        if(isCheck(board)) {
+            System.out.println("========== Check =========");
+        }
+
+
         return "legal";
     }
 
@@ -258,10 +275,6 @@ public class LegalMoveService {
         //not relevant for King, which is only a capture or self-obstruction
 
         //not relevant for Knight
-
-    //bishop down right
-        //black rook, why does color matter?
-
 
         //Rook
         if(p.equals("R")) {

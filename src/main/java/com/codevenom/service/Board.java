@@ -7,6 +7,9 @@ import java.util.HashSet;
 
 public class Board {
 
+    public static boolean Check = false;
+    public static boolean CheckMate = false;
+
 	public Board() {
 	}
 
