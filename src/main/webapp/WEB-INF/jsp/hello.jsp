@@ -189,11 +189,12 @@
         var clickCount = 0;
         var isPieceHighlighted = false;
         var highlightedPiece;
-        var start = null;
-        var end = null;
-		var piece = null;
-        var legalMove = false;
-        var square = null;
+        var capturedPiece;
+        var start = null; //id, e2
+        var end = null;   //id, e4
+		var piece = null; //class, wPawn
+        //var legalMove = false;
+        //var square = null;
 
         initializeBoard();
 
@@ -215,16 +216,23 @@
             // Unhighlight all the images
             $('#chess-board img').removeClass('highlighted');
 
-            if (! (this == highlightedPiece)) {
-                // Highlight the newly selected image
+            if(this == highlightedPiece) {
+                resetVars();
+                console.log('same piece');
+            }
+            else if (isPieceHighlighted) {
+                console.log('capturing');
+                //sendCaptureToServer(start, end, piece, this);
+                //var this_src = $(this).attr("src");
+                //= highlightedPiece.attr("src");
+            }
+            else {
+                //else, just highlight the newly selected image
                 $(this).addClass('highlighted');
                 piece = $(this).attr("class");
                 isPieceHighlighted = true;
                 highlightedPiece = this;
                 console.log('different piece');
-            } else {
-                resetVars();
-                console.log('same piece');
             }
         });
 
@@ -232,16 +240,13 @@
             $.ajax({
                 type: "POST",
                 url: "/initializeBoard.htm",
-                //data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p + "&square=" + sq,
                 success: function(response){
-                    // we have the response
                     console.log("initializeBoard");
                 },
                 error: function(e){
                     alert('Error in initializeBoard');
                 }
             });
-            //return legal_move;
         }
 
         function sendMoveToServer(start, end, p, sq) {
@@ -256,18 +261,33 @@
                         console.log('if statement, illegal ' + response);
                         //legal_move = false;
                         $('#chess-board img').removeClass('highlighted');
-                        clickCount = 0;
+                        resetVars();
                     }
                     else {
                         console.log('if statement, legal ' + response);
                         //legal_move = true;
                         $(sq).append(highlightedPiece);
                         $('#chess-board img').removeClass('highlighted');
-                        clickCount = 0;
+                        resetVars();
                     }
                 },
                 error: function(e){
                     alert('Error in send move to server: ' + start + end + p);
+                }
+            });
+            //return legal_move;
+        }
+
+        function sendCaptureToServer(start, end, p, capturedPiece) {
+            $.ajax({
+                type: "POST",
+                url: "/makeMove.htm",
+                data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p + "&captured_piece=" + capturedPiece,
+                success: function(response){
+
+                },
+                error: function(e){
+                    alert('Error in send capture to server.');
                 }
             });
             //return legal_move;

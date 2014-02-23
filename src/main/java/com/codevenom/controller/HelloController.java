@@ -49,7 +49,6 @@ public class HelloController {
 
         System.out.println("isLegal: " + isLegal);
 
-
         return isLegal;
     }
 
