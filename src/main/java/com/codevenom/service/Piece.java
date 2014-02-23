@@ -8,6 +8,7 @@ public class Piece {
     public String name1 = "";
     public String fullName = "empty";
     public int value = 0;
+    public boolean hasMoved = false;
 
 
 	Piece() {
@@ -15,6 +16,7 @@ public class Piece {
         this.fullName = "empty";
         this.color = "none";
         this.value = 0;
+        this.hasMoved = false;
 	}
 
     Piece(Piece current) {
@@ -22,11 +24,13 @@ public class Piece {
         this.fullName = current.fullName;
         this.color = current.color;
         this.value = current.value;
+        this.hasMoved = current.hasMoved;
     }
 
 	Piece(String pieceName) {
 		this.fullName = pieceName;
-		if(pieceName.equals("wKing")) {
+        this.hasMoved = false;
+        if(pieceName.equals("wKing")) {
 			this.color = "white";
 			this.name1 = "K";
 			this.value = 9999;

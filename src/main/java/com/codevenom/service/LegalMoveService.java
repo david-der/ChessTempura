@@ -59,6 +59,78 @@ public class LegalMoveService {
         Piece p = board[oldRow][oldCol];
 
         if(p.name1.equals("K")) {
+            //castling
+            if(color.equals("w")) {
+                if(start.equals("e1") && end.equals("g1")) { //kingside castle
+                    if(!board[1][6].fullName.equals("empty") || !board[1][7].fullName.equals("empty")) {
+                        System.out.println("can't castle kingside through a piece");
+                        return "illegal";
+                    }
+                    if(p.hasMoved == true) {
+                        System.out.println("can't castle, king already moved");
+                        return "illegal";
+                    }
+                    if(!board[1][8].fullName.equals("wRook") || board[1][8].hasMoved) {
+                        System.out.println("can't castle, rook already moved");
+                        return "illegal";
+                    }
+                    System.out.println("legal white castle");
+                    return "legal";
+                }
+                else if(start.equals("e1") && end.equals("c1")) { //queenside castle
+                    if(!board[1][2].fullName.equals("empty") || !board[1][3].fullName.equals("empty") || !board[1][4].fullName.equals("empty") ) {
+                        System.out.println("can't castle queenside through a piece");
+                        return "illegal";
+                    }
+                    if(p.hasMoved == true) {
+                        System.out.println("can't castle, king already moved");
+                        return "illegal";
+                    }
+                    if(!board[1][1].fullName.equals("wRook") || board[1][1].hasMoved) {
+                        System.out.println("can't castle, rook already moved");
+                        return "illegal";
+                    }
+                    System.out.println("legal white castle");
+                    return "legal";
+                }
+            }
+            else if(color.equals("b")) {
+                if(start.equals("e8") && end.equals("g8")) { //kingside castle
+                    if(!board[8][6].fullName.equals("empty") || !board[8][7].fullName.equals("empty")) {
+                        System.out.println("can't castle kingside through a piece");
+                        return "illegal";
+                    }
+                    if(p.hasMoved == true) {
+                        System.out.println("can't castle, king already moved");
+                        return "illegal";
+                    }
+                    if(!board[8][8].fullName.equals("bRook") || board[8][8].hasMoved) {
+                        System.out.println("can't castle, rook already moved");
+                        return "illegal";
+                    }
+                    System.out.println("legal black castle");
+                    return "legal";
+                }
+                else if(start.equals("e8") && end.equals("c8")) { //queenside castle
+                    if(!board[8][2].fullName.equals("empty") || !board[8][3].fullName.equals("empty") || !board[8][4].fullName.equals("empty") ) {
+                        System.out.println("can't castle queenside through a piece");
+                        return "illegal";
+                    }
+                    if(p.hasMoved == true) {
+                        System.out.println("can't castle, king already moved");
+                        return "illegal";
+                    }
+                    if(!board[8][1].fullName.equals("bRook") || board[8][1].hasMoved) {
+                        System.out.println("can't castle, rook already moved");
+                        return "illegal";
+                    }
+                    System.out.println("legal black castle");
+                    return "legal";
+                }
+            }
+
+            //regular king move
+            //won't be evaluated if successful castle, because a castle breaks this >1 square rule
             if( abs(newCol-oldCol) > 1 || abs(newRow-oldRow) > 1) {
                 System.out.println("illegal King move");
                 return "illegal";
@@ -173,6 +245,7 @@ public class LegalMoveService {
         board[oldRow][oldCol] = previous_new;
 
         isWhitesTurn = !isWhitesTurn;
+        p.hasMoved = true;
         return "legal";
     }
 
