@@ -7,10 +7,14 @@ import java.util.HashSet;
 
 public class Board {
 
-    public static boolean Check = false;
-    public static boolean CheckMate = false;
+    public static boolean whiteInCheck = false; //white must move out of check
+    public static boolean blackInCheck = false; //black must move out of check
 
-	public Board() {
+    public static boolean whiteInCheckMate = false; //white loses
+    public static boolean blackInCheckMate = false; //black loses
+
+
+    public Board() {
 	}
 
     public static int row(String square) { //for example, square="e2"

@@ -268,6 +268,27 @@ public class LegalMoveService {
         }
 
 
+        //if white's turn, and white is in check, a legal move must relieve the check
+        if(! checkOnly) {
+            if(  (Board.whiteInCheck && isWhitesTurn) || (Board.blackInCheck && !isWhitesTurn) ) {
+                //make the move...
+                Piece previous_new = board[newCol][newRow];
+                board[newCol][newRow] = board[oldCol][oldRow];
+                board[oldCol][oldRow] = previous_new;
+
+                String resultIsCheck = isCheck();
+
+                //...unmake the move no matter what (will be re-made below if no return
+                previous_new = board[newCol][newRow];
+                board[newCol][newRow] = board[oldCol][oldRow];
+                board[oldCol][oldRow] = previous_new;
+
+                if(resultIsCheck.equals("check")) {
+                    return "illegal";
+                }
+            }
+        }
+
         //passed all the illegal move filters
         //execute the move, unless the function was only called for Check detection
         if(! checkOnly) {
@@ -278,19 +299,14 @@ public class LegalMoveService {
             p.hasMoved = true;
         }
 
-        /*System.out.println("is check?");
-        if(isCheck(board, isWhitesTurn)) { //if white just moved, it's black's turn
-            System.out.println("... Check ...");
-        }*/
-
 
         return moveType;
     }
 
-    public static String isCheck() { //if white just moved, it's black's turn
+    public static String isCheck() {
 
-        //is white King in check
-        if(true) {
+        //if black just moved, it's whites's turn, is white in Check
+        if(isWhitesTurn) {
             //find white king
             String end_king_square = "";
             for(int col=1; col<=8; ++col) {
@@ -309,18 +325,18 @@ public class LegalMoveService {
                     String piece_name = p.fullName;
                     if(!piece_name.equals("empty") && p.color.equals("black")) {
                         String start = Board.square(col,row);
-                        System.out.println(start + " " + piece_name + " \t: wKing " + end_king_square);
                         String moveType = isThisMoveLegal(start, end_king_square, piece_name, true);
                         if(!moveType.equals("illegal")) {
-                            System.out.println("========== wKing is in Check =========");
-                            Board.Check = true;
+                            System.out.println(start + " " + piece_name + " \t: wKing " + end_king_square + " \t CHECK!");
+                            Board.whiteInCheck = true;
                             return "check";
                         }
                     }
                 }
             }
         }
-        if(true) {
+        //if white just moved, it's black's turn, is black in Check
+        if(!isWhitesTurn) {
             //find black king
             String end_king_square = "";
             for(int col=1; col<=8; ++col) {
@@ -331,7 +347,7 @@ public class LegalMoveService {
                         System.out.println("found bKing on " + end_king_square);
                     }
                 }
-        }
+            }
             //check if any piece move to the king end square is legal
             for(int col=1; col<=8; ++col) {
                 for(int row=1; row<=8; ++row) {
@@ -339,11 +355,11 @@ public class LegalMoveService {
                     String piece_name = p.fullName;
                     if(!piece_name.equals("empty") && p.color.equals("white")) {
                         String start = Board.square(col,row);
-                        System.out.println(start + " " + piece_name + " \t: bKing " + end_king_square);
                         String moveType = isThisMoveLegal(start, end_king_square, piece_name, true);
                         if(!moveType.equals("illegal")) {
+                            System.out.println(start + " " + piece_name + " \t: bKing " + end_king_square + " \t CHECK!");
                             System.out.println("========== bKing is in Check =========");
-                            Board.Check = true;
+                            Board.blackInCheck = true;
                             return "check";
                         }
                     }
@@ -352,6 +368,8 @@ public class LegalMoveService {
 
 
         }
+        Board.whiteInCheck = false;
+        Board.blackInCheck = false;
 
         return "no_check";
     }
