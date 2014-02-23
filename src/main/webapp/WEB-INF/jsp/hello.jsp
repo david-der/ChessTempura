@@ -269,6 +269,7 @@
                         $(sq).append(highlightedPiece);
                         $('#chess-board img').removeClass('highlighted');
                         resetVars();
+                        isCheck();  //after a successful move, see if the king is in check
                     }
                 },
                 error: function(e){
@@ -291,6 +292,19 @@
                 }
             });
             //return legal_move;
+        }
+
+        function isCheck() {
+            $.ajax({
+                type: "POST",
+                url: "/isCheck.htm",
+                success: function(response){
+                    //console.log("success in isCheck");
+                },
+                error: function(e){
+                    alert('Error in isCheck');
+                }
+            });
         }
 
         function resetVars() {

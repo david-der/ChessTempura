@@ -39,27 +39,23 @@ public class HelloController {
         String endSquare = params.get("endSquare");
         String piece = params.get("piece");
 
-        System.out.println("test1");
-        System.out.println("Start square: " + startSquare);
-        System.out.println("End square: " + endSquare);
-        System.out.println("test");
-        System.out.println("piece: " + piece);
-
-        String isLegal = LegalMoveService.isThisMoveLegal(startSquare, endSquare, piece);
-
-        System.out.println("isLegal: " + isLegal);
+        String isLegal = LegalMoveService.isThisMoveLegal(startSquare, endSquare, piece, false);
 
         return isLegal;
+    }
+
+    @RequestMapping(value="/isCheck.htm",method= RequestMethod.POST)
+    public @ResponseBody
+    String isCheck(@RequestParam Map<String, String> params) {
+        String is_check = LegalMoveService.isCheck();
+        return is_check;
     }
 
     @RequestMapping(value="/initializeBoard.htm",method= RequestMethod.POST)
     public @ResponseBody
     String initializeBoard(@RequestParam Map<String, String> params) {
-
         Board board = new Board();
-
         return "initialized";
-
     }
 
 }

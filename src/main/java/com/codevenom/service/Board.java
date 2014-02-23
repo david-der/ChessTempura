@@ -27,7 +27,20 @@ public class Board {
         if(square.substring(0,1).equals("h")) { return 8; }
         return 0;
     }
-
+    public static String square(int col, int row) {
+        String r = Integer.toString(row);
+        String c = "";
+        if(col == 1) { c = "a"; }
+        if(col == 2) { c = "b"; }
+        if(col == 3) { c = "c"; }
+        if(col == 4) { c = "d"; }
+        if(col == 5) { c = "e"; }
+        if(col == 6) { c = "f"; }
+        if(col == 7) { c = "g"; }
+        if(col == 8) { c = "h"; }
+        String square = c + r;
+        return square;
+    }
 
 	public static Piece[][] startingBoard() {
 

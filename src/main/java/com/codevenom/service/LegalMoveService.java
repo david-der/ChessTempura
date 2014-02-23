@@ -14,8 +14,17 @@ public class LegalMoveService {
     private static boolean isWhitesTurn = true;
     private static Piece[][] board = Board.startingBoard();
 
-    public static String isThisMoveLegal(String start, String end, String piece) {
-        System.out.println("Received move " + piece + " from " + start + " to " + end);
+    public static String isThisMoveLegal(String start, String end, String piece, boolean checkOnly) {
+        //System.out.println("Received move " + piece + " from " + start + " to " + end);
+
+        int oldCol = Board.col(start);
+        int oldRow = Board.row(start);
+        int newCol = Board.col(end);
+        int newRow = Board.row(end);
+        String color = piece.substring(0, 1);
+
+        //System.out.println("old square integers:" + oldCol + " " + oldRow);
+        //System.out.println("new square integers:" + newCol + " " + newRow);
 
         String moveType = "legal";   //the end of this function returns moveType
         //legal
@@ -26,42 +35,37 @@ public class LegalMoveService {
         //white_pawn_promotion
         //black_pawn_promotion
 
-        //There are many ways a move can be illegal.
-        //Only return "legal" if the move passes all the illegal filters.
+        ////////////////////////////////////////////////////////////////////////
+        // There are many ways a move can be illegal.
+        // Only return "legal" if the move passes all the illegal filters.
+        ////////////////////////////////////////////////////////////////////////
 
-        String color = piece.substring(0, 1);
-        if(isWhitesTurn) {
-            if(color.equals("b")) {
-                System.out.println("white to move.");
-                return "illegal";
+        if(! checkOnly) {  // whose turn it is becomes backwards when looking for check
+            if(isWhitesTurn) {
+                if(color.equals("b")) {
+                    //System.out.println("white to move.");
+                    return "illegal";
+                }
             }
-        }
-        else if(!isWhitesTurn) {
-            if(color.equals("w")) {
-                System.out.println("black to move.");
-                return "illegal";
+            else if(!isWhitesTurn) {
+                if(color.equals("w")) {
+                    //System.out.println("black to move.");
+                    return "illegal";
+                }
             }
-        }
-
-        int oldCol = Board.col(start);
-        int oldRow = Board.row(start);
-        int newCol = Board.col(end);
-        int newRow = Board.row(end);
-
-        System.out.println("old square integers:" + oldCol + " " + oldRow);
-        System.out.println("new square integers:" + newCol + " " + newRow);
-
-
-        //can't take your own piece
-        if(isWhitesTurn && board[newCol][newRow].color.equals("white")) {
-            return "illegal";
-        }
-        if(!isWhitesTurn && board[newCol][newRow].color.equals("black")) {
-            return "illegal";
         }
 
 
         Piece p = board[oldCol][oldRow];
+
+        //can't take your own piece
+        if(p.color.equals("white") && board[newCol][newRow].color.equals("white")) {
+            return "illegal";
+        }
+        if(p.color.equals("black") && board[newCol][newRow].color.equals("black")) {
+            return "illegal";
+        }
+
 
         boolean thisMoveIsCastle = false;
         if(p.name1.equals("K")) {
@@ -150,27 +154,27 @@ public class LegalMoveService {
             //regular king move
             if(!thisMoveIsCastle) {
                 if( abs(newCol-oldCol) > 1 || abs(newRow-oldRow) > 1) {
-                    System.out.println("illegal King move");
+                    //System.out.println("illegal King move");
                     return "illegal";
                 }
             }
         }
         else if(p.name1.equals("R")) {
             if( abs(newCol-oldCol) > 0 && abs(newRow-oldRow) > 0 ) {
-                System.out.println("illegal Rook move. can only move along files and ranks");
+                //System.out.println("illegal Rook move. can only move along files and ranks");
                 return "illegal";
             }
         }
         else if(p.name1.equals("B")) {
             if( abs(newCol-oldCol) != abs(newRow-oldRow) ) {
-                System.out.println("illegal Bishop move. can only move along diagonal");
+                //System.out.println("illegal Bishop move. can only move along diagonal");
                 return "illegal";
             }
         }
         else if(p.name1.equals("Q")) {
             if( abs(newCol-oldCol) > 0 && abs(newRow-oldRow) > 0 ) { //if either row or column doesnt change, it's a Rook move.  if both change:
                 if( abs(newCol-oldCol) != abs(newRow-oldRow) ) {
-                    System.out.println("illegal Queen move. can only move along files and ranks, or along a diagonal");
+                    //System.out.println("illegal Queen move. can only move along files and ranks, or along a diagonal");
                     return "illegal";
                 }
             }
@@ -183,38 +187,38 @@ public class LegalMoveService {
                 //legal
             }
             else {
-                System.out.println("illegal Knight move. can only move 2x1 or 1x2");
+                //System.out.println("illegal Knight move. can only move 2x1 or 1x2");
                 return "illegal";
             }
         }
         else if(p.name1.equals("p")) {//pawns are the tricky pieces
             if(p.color.equals("white")) {
                 if( abs(newCol-oldCol) > 1 ) {
-                    System.out.println("illegal pawn move. too far horizontally");
+                    //System.out.println("illegal pawn move. too far horizontally");
                     return "illegal";
                 }
                 else if( abs(newCol-oldCol) == 1 && !board[newCol][newRow].color.equals("black") ) {
-                    System.out.println("illegal pawn move. can't change column if not attacking");
+                    //System.out.println("illegal pawn move. can't change column if not attacking");
                     return "illegal";
                 }
                 else if( abs(newCol-oldCol) == 0 && board[newCol][newRow].color.equals("black") ) {
-                    System.out.println("illegal pawn move. can't attack straight");
+                    //System.out.println("illegal pawn move. can't attack straight");
                     return "illegal";
                 }
                 else if( newRow - oldRow < 0 ) {
-                    System.out.println("illegal pawn move. backwards");
+                    //System.out.println("illegal pawn move. backwards");
                     return "illegal";
                 }
                 else if( newRow - oldRow > 2) {
-                    System.out.println("illegal pawn move. too far");
+                    //System.out.println("illegal pawn move. too far");
                     return "illegal";
                 }
                 else if(oldRow != 2 && abs(newRow - oldRow) == 2) {
-                    System.out.println("illegal pawn move. can only move 2 spaces from starting square");
+                    //System.out.println("illegal pawn move. can only move 2 spaces from starting square");
                     return "illegal";
                 }
                 else if(board[newCol][newRow].color.equals("black") && ( abs(newCol-oldCol) != 1 || newRow-oldRow != 1  )  ) {
-                    System.out.println("illegal pawn move. incorrect attack");
+                    //System.out.println("illegal pawn move. incorrect attack");
                     return "illegal";
                 }
                 if(newRow == 8) {
@@ -224,31 +228,31 @@ public class LegalMoveService {
             }
             else if(p.color.equals("black")) {
                 if( abs(newCol-oldCol) > 1 ) {
-                    System.out.println("illegal pawn move. too far horizontally");
+                    //System.out.println("illegal pawn move. too far horizontally");
                     return "illegal";
                 }
                 else if( abs(newCol-oldCol) == 1 && !board[newCol][newRow].color.equals("white") ) {
-                    System.out.println("illegal pawn move. can't change column if not attacking");
+                    //System.out.println("illegal pawn move. can't change column if not attacking");
                     return "illegal";
                 }
                 else if( abs(newCol-oldCol) == 0 && board[newCol][newRow].color.equals("white") ) {
-                    System.out.println("illegal pawn move. can't attack straight");
+                    //System.out.println("illegal pawn move. can't attack straight");
                     return "illegal";
                 }
                 else if( oldRow - newRow < 0 ) {
-                    System.out.println("illegal pawn move. backwards");
+                    //System.out.println("illegal pawn move. backwards");
                     return "illegal";
                 }
                 else if( oldRow - newRow > 2) {
-                    System.out.println("illegal pawn move. too far");
+                    //System.out.println("illegal pawn move. too far");
                     return "illegal";
                 }
                 else if(oldRow != 7 && abs(newRow - oldRow) == 2) {
-                    System.out.println("illegal pawn move. can only move 2 spaces from starting square");
+                    //System.out.println("illegal pawn move. can only move 2 spaces from starting square");
                     return "illegal";
                 }
                 else if(board[newCol][newRow].color.equals("white") && ( abs(newCol-oldCol) != 1 || oldRow-newRow != 1  )  ) {
-                    System.out.println("illegal pawn move. incorrect attack");
+                    //System.out.println("illegal pawn move. incorrect attack");
                     return "illegal";
                 }
                 if(newRow == 1) {
@@ -265,20 +269,91 @@ public class LegalMoveService {
 
 
         //passed all the illegal move filters
+        //execute the move, unless the function was only called for Check detection
+        if(! checkOnly) {
+            Piece previous_new = board[newCol][newRow];
+            board[newCol][newRow] = board[oldCol][oldRow];
+            board[oldCol][oldRow] = previous_new;
+            isWhitesTurn = !isWhitesTurn;
+            p.hasMoved = true;
+        }
 
-        Piece previous_new = board[newCol][newRow];
-        board[newCol][newRow] = board[oldCol][oldRow];
-        board[oldCol][oldRow] = previous_new;
-        isWhitesTurn = !isWhitesTurn;
-        p.hasMoved = true;
-
-
-        //if(isCheck(board)) {
-            //System.out.println("========== Check =========");
-        //}
+        /*System.out.println("is check?");
+        if(isCheck(board, isWhitesTurn)) { //if white just moved, it's black's turn
+            System.out.println("... Check ...");
+        }*/
 
 
         return moveType;
+    }
+
+    public static String isCheck() { //if white just moved, it's black's turn
+
+        //is white King in check
+        if(true) {
+            //find white king
+            String end_king_square = "";
+            for(int col=1; col<=8; ++col) {
+                for(int row=1; row<=8; ++row) {
+                    Piece p = board[col][row];
+                    if(p.fullName.equals("wKing")) {
+                        end_king_square = Board.square(col,row);
+                        System.out.println("found wKing on " + end_king_square);
+                    }
+                }
+            }
+            //check if any piece move to the king end square is legal
+            for(int col=1; col<=8; ++col) {
+                for(int row=1; row<=8; ++row) {
+                    Piece p = board[col][row];
+                    String piece_name = p.fullName;
+                    if(!piece_name.equals("empty") && p.color.equals("black")) {
+                        String start = Board.square(col,row);
+                        System.out.println(start + " " + piece_name + " \t: wKing " + end_king_square);
+                        String moveType = isThisMoveLegal(start, end_king_square, piece_name, true);
+                        if(!moveType.equals("illegal")) {
+                            System.out.println("========== wKing is in Check =========");
+                            Board.Check = true;
+                            return "check";
+                        }
+                    }
+                }
+            }
+        }
+        if(true) {
+            //find black king
+            String end_king_square = "";
+            for(int col=1; col<=8; ++col) {
+                for(int row=1; row<=8; ++row) {
+                    Piece p = board[col][row];
+                    if(p.fullName.equals("bKing")) {
+                        end_king_square = Board.square(col,row);
+                        System.out.println("found bKing on " + end_king_square);
+                    }
+                }
+        }
+            //check if any piece move to the king end square is legal
+            for(int col=1; col<=8; ++col) {
+                for(int row=1; row<=8; ++row) {
+                    Piece p = board[col][row];
+                    String piece_name = p.fullName;
+                    if(!piece_name.equals("empty") && p.color.equals("white")) {
+                        String start = Board.square(col,row);
+                        System.out.println(start + " " + piece_name + " \t: bKing " + end_king_square);
+                        String moveType = isThisMoveLegal(start, end_king_square, piece_name, true);
+                        if(!moveType.equals("illegal")) {
+                            System.out.println("========== bKing is in Check =========");
+                            Board.Check = true;
+                            return "check";
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+        return "no_check";
     }
 
     private static boolean isClearPath(String start, String end, String p) {
@@ -295,7 +370,7 @@ public class LegalMoveService {
         if(p.equals("R")) {
             if(newRow > oldRow) { //up
                 for(int i=oldRow+1; i<newRow; ++i) {
-                    System.out.println("rook path up: " + newCol + i + " " + board[newCol][i].fullName);
+                    ////System.out.println("rook path up: " + newCol + i + " " + board[newCol][i].fullName);
                     if(!board[newCol][i].fullName.equals("empty")){
                         return false;
                     }
@@ -303,7 +378,7 @@ public class LegalMoveService {
             }
             else if(oldRow > newRow) { //down
                 for(int i=oldRow-1; i>newRow; --i) {
-                    System.out.println("rook path down: " + newCol + i + " " + board[newCol][i].fullName);
+                    //System.out.println("rook path down: " + newCol + i + " " + board[newCol][i].fullName);
                     if(!board[newCol][i].fullName.equals("empty")){
                         return false;
                     }
@@ -311,7 +386,7 @@ public class LegalMoveService {
             }
             else if(oldCol > newCol) { //left
                 for(int i=oldCol-1; i>newCol; --i) {
-                    System.out.println("rook path left: " + newCol + i + " " + board[i][newRow].fullName);
+                    //System.out.println("rook path left: " + newCol + i + " " + board[i][newRow].fullName);
                     if(!board[i][newRow].fullName.equals("empty")){
                         return false;
                     }
@@ -319,7 +394,7 @@ public class LegalMoveService {
             }
             else if(newCol > oldCol) { //right
                 for(int i=oldCol+1; i<newCol; ++i) {
-                    System.out.println("rook path right: " + newCol + i + " " + board[i][newRow].fullName);
+                    //System.out.println("rook path right: " + newCol + i + " " + board[i][newRow].fullName);
                     if(!board[i][newRow].fullName.equals("empty")){
                         return false;
                     }
@@ -330,7 +405,7 @@ public class LegalMoveService {
             if(newRow > oldRow && newCol > oldCol) { //up-right, row increasing, column increasing
                 int pathRow = oldRow+1;
                 for(int i=oldCol+1; i<newCol; ++i) {
-                    System.out.println("bishop path up-right: " + i + pathRow + " " + board[i][pathRow].fullName);
+                    //System.out.println("bishop path up-right: " + i + pathRow + " " + board[i][pathRow].fullName);
                     if(!board[i][pathRow].fullName.equals("empty")){
                         return false;
                     }
@@ -340,7 +415,7 @@ public class LegalMoveService {
             else if(newRow > oldRow && oldCol > newCol) { //up-left: row increasing, column decreasing
                 int pathRow = oldRow+1;
                 for(int i=oldCol-1; i>newCol; --i) {
-                    System.out.println("bishop path up-left: " + i + pathRow + " " + board[i][pathRow].fullName);
+                    //System.out.println("bishop path up-left: " + i + pathRow + " " + board[i][pathRow].fullName);
                     if(!board[i][pathRow].fullName.equals("empty")){
                         return false;
                     }
@@ -350,7 +425,7 @@ public class LegalMoveService {
             else if(oldRow > newRow && newCol > oldCol) { //down-right, row decreasing, column increasing
                 int pathRow = oldRow-1;
                 for(int i=oldCol+1; i<newCol; ++i) {
-                    System.out.println("bishop path down-right: " + i + pathRow + " " + board[i][pathRow].fullName);
+                    //System.out.println("bishop path down-right: " + i + pathRow + " " + board[i][pathRow].fullName);
                     if(!board[i][pathRow].fullName.equals("empty")){
                         return false;
                     }
@@ -360,7 +435,7 @@ public class LegalMoveService {
             else if(oldRow > newRow && oldCol > newCol) { //down-left
                 int pathRow = oldRow-1;
                 for(int i=oldCol-1; i>newCol; --i) {
-                    System.out.println("bishop path down-left: " + i + pathRow + " " + board[i][pathRow].fullName);
+                    //System.out.println("bishop path down-left: " + i + pathRow + " " + board[i][pathRow].fullName);
                     if(!board[i][pathRow].fullName.equals("empty")){
                         return false;
                     }
@@ -376,7 +451,7 @@ public class LegalMoveService {
                 if(newRow > oldRow && newCol > oldCol) { //up-right, row increasing, column increasing
                     int pathRow = oldRow+1;
                     for(int i=oldCol+1; i<newCol; ++i) {
-                        System.out.println("queen path up-right: " + i + pathRow + " " + board[i][pathRow].fullName);
+                        //System.out.println("queen path up-right: " + i + pathRow + " " + board[i][pathRow].fullName);
                         if(!board[i][pathRow].fullName.equals("empty")){
                             return false;
                         }
@@ -386,7 +461,7 @@ public class LegalMoveService {
                 else if(newRow > oldRow && oldCol > newCol) { //up-left: row increasing, column decreasing
                     int pathRow = oldRow+1;
                     for(int i=oldCol-1; i>newCol; --i) {
-                        System.out.println("queen path up-left: " + i + pathRow + " " + board[i][pathRow].fullName);
+                        //System.out.println("queen path up-left: " + i + pathRow + " " + board[i][pathRow].fullName);
                         if(!board[i][pathRow].fullName.equals("empty")){
                             return false;
                         }
@@ -396,7 +471,7 @@ public class LegalMoveService {
                 else if(oldRow > newRow && newCol > oldCol) { //down-right, row decreasing, column increasing
                     int pathRow = oldRow-1;
                     for(int i=oldCol+1; i<newCol; ++i) {
-                        System.out.println("queen path down-right: " + i + pathRow + " " + board[i][pathRow].fullName);
+                        //System.out.println("queen path down-right: " + i + pathRow + " " + board[i][pathRow].fullName);
                         if(!board[i][pathRow].fullName.equals("empty")){
                             return false;
                         }
@@ -406,7 +481,7 @@ public class LegalMoveService {
                 else if(oldRow > newRow && oldCol > newCol) { //down-left
                     int pathRow = oldRow-1;
                     for(int i=oldCol-1; i>newCol; --i) {
-                        System.out.println("queen path down-left: " + i + pathRow + " " + board[i][pathRow].fullName);
+                        //System.out.println("queen path down-left: " + i + pathRow + " " + board[i][pathRow].fullName);
                         if(!board[i][pathRow].fullName.equals("empty")){
                             return false;
                         }
@@ -418,7 +493,7 @@ public class LegalMoveService {
                 //Rook rules for queen
                 if(newRow > oldRow) { //up
                     for(int i=oldRow+1; i<newRow; ++i) {
-                        System.out.println("queen path up: " + newCol + i + " " + board[newCol][i].fullName);
+                        //System.out.println("queen path up: " + newCol + i + " " + board[newCol][i].fullName);
                         if(!board[newCol][i].fullName.equals("empty")){
                             return false;
                         }
@@ -426,7 +501,7 @@ public class LegalMoveService {
                 }
                 else if(oldRow > newRow) { //down
                     for(int i=oldRow-1; i>newRow; --i) {
-                        System.out.println("queen path down: " + newCol + i + " " + board[newCol][i].fullName);
+                        //System.out.println("queen path down: " + newCol + i + " " + board[newCol][i].fullName);
                         if(!board[newCol][i].fullName.equals("empty")){
                             return false;
                         }
@@ -434,7 +509,7 @@ public class LegalMoveService {
                 }
                 else if(oldCol > newCol) { //left
                     for(int i=oldCol-1; i>newCol; --i) {
-                        System.out.println("queen path left: " + newCol + i + " " + board[i][newRow].fullName);
+                        //System.out.println("queen path left: " + newCol + i + " " + board[i][newRow].fullName);
                         if(!board[i][newRow].fullName.equals("empty")){
                             return false;
                         }
@@ -442,7 +517,7 @@ public class LegalMoveService {
                 }
                 else if(newCol > oldCol) { //right
                     for(int i=oldCol+1; i<newCol; ++i) {
-                        System.out.println("queen path right: " + newCol + i + " " + board[i][newRow].fullName);
+                        //System.out.println("queen path right: " + newCol + i + " " + board[i][newRow].fullName);
                         if(!board[i][newRow].fullName.equals("empty")){
                             return false;
                         }
@@ -455,7 +530,7 @@ public class LegalMoveService {
             if(abs(newRow-oldRow) == 2) {
                 if(newRow > oldRow) { //up
                     for(int i=oldRow+1; i<newRow; ++i) {
-                        System.out.println("pawn path 2 up: " + newCol + i + " " + board[newCol][i].fullName);
+                        //System.out.println("pawn path 2 up: " + newCol + i + " " + board[newCol][i].fullName);
                         if(!board[newCol][i].fullName.equals("empty")){
                             return false;
                         }
@@ -463,7 +538,7 @@ public class LegalMoveService {
                 }
                 else if(oldRow > newRow) { //down
                     for(int i=oldRow-1; i>newRow; --i) {
-                        System.out.println("pawn path 2 down: " + newCol + i + " " + board[newCol][i].fullName);
+                        //System.out.println("pawn path 2 down: " + newCol + i + " " + board[newCol][i].fullName);
                         if(!board[newCol][i].fullName.equals("empty")){
                             return false;
                         }
