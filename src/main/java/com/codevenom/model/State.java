@@ -1,54 +1,37 @@
-package com.codevenom.service;
+package com.codevenom.model;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.HashSet;
 
-public class Board {
+public class State {
 
+    public static boolean isWhitesTurn = true;
     public static boolean whiteInCheck = false; //white must move out of check
     public static boolean blackInCheck = false; //black must move out of check
-
     public static boolean whiteInCheckMate = false; //white loses
     public static boolean blackInCheckMate = false; //black loses
+    public static Piece[][] board = startingBoard();
 
-
-    public Board() {
+    public State() {
+        isWhitesTurn = true;
+        whiteInCheck = false;
+        blackInCheck = false;
+        whiteInCheckMate = false;
+        blackInCheckMate = false;
+        board = startingBoard();
 	}
 
-    public static int row(String square) { //for example, square="e2"
-        return Integer.valueOf(square.substring(1,2));
-    }
-    public static int col(String square) {
-        if(square.substring(0,1).equals("a")) { return 1; }
-        if(square.substring(0,1).equals("b")) { return 2; }
-        if(square.substring(0,1).equals("c")) { return 3; }
-        if(square.substring(0,1).equals("d")) { return 4; }
-        if(square.substring(0,1).equals("e")) { return 5; }
-        if(square.substring(0,1).equals("f")) { return 6; }
-        if(square.substring(0,1).equals("g")) { return 7; }
-        if(square.substring(0,1).equals("h")) { return 8; }
-        return 0;
-    }
-    public static String square(int col, int row) {
-        String r = Integer.toString(row);
-        String c = "";
-        if(col == 1) { c = "a"; }
-        if(col == 2) { c = "b"; }
-        if(col == 3) { c = "c"; }
-        if(col == 4) { c = "d"; }
-        if(col == 5) { c = "e"; }
-        if(col == 6) { c = "f"; }
-        if(col == 7) { c = "g"; }
-        if(col == 8) { c = "h"; }
-        String square = c + r;
-        return square;
-    }
-
 	public static Piece[][] startingBoard() {
+        isWhitesTurn = true;
 
-		Piece[][] board = new Piece[9][9];
+        whiteInCheck = false; //white must move out of check
+        blackInCheck = false; //black must move out of check
+
+        whiteInCheckMate = false; //white loses
+        blackInCheckMate = false; //black loses
+		board = new Piece[9][9];
 
         //[col][row] for consistency with chess square names
 

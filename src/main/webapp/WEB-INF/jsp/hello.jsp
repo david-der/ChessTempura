@@ -193,8 +193,7 @@
         var start = null; //id, e2
         var end = null;   //id, e4
 		var piece = null; //class, wPawn
-        //var legalMove = false;
-        //var square = null;
+
 
         initializeBoard();
 
@@ -223,8 +222,6 @@
             else if (isPieceHighlighted) {
                 console.log('capturing');
                 //sendCaptureToServer(start, end, piece, this);
-                //var this_src = $(this).attr("src");
-                //= highlightedPiece.attr("src");
             }
             else {
                 //else, just highlight the newly selected image
@@ -269,8 +266,6 @@
                         $(sq).append(highlightedPiece);
                         $('#chess-board img').removeClass('highlighted');
                         resetVars();
-                        //isCheck();  //after a successful move, see if the king is in check
-                        //isCheckMate();
                     }
                 },
                 error: function(e){
@@ -280,7 +275,18 @@
             //return legal_move;
         }
 
-        function sendCaptureToServer(start, end, p, capturedPiece) {
+        function resetVars() {
+            clickCount = 0;
+            isPieceHighlighted = false;
+            highlightedPiece = null;
+            start = null;
+            end = null;
+            piece = null;
+            $('#chess-board img').removeClass('highlighted');
+        }
+
+
+        /*function sendCaptureToServer(start, end, p, capturedPiece) {
             $.ajax({
                 type: "POST",
                 url: "/makeMove.htm",
@@ -318,17 +324,9 @@
                     alert('Error in isCheckMate');
                 }
             });
-        }
+        }*/
 
-        function resetVars() {
-            clickCount = 0;
-            isPieceHighlighted = false;
-            highlightedPiece = null;
-            start = null;
-            end = null;
-            piece = null;
-            $('#chess-board img').removeClass('highlighted');
-        }
+
         
         <%--function makeTableHTML(myArray) {
             var result = "<table border=1>";

@@ -1,4 +1,4 @@
-package com.codevenom.service;
+package com.codevenom.model;
 
 //import java.util.ArrayList;
 
@@ -11,7 +11,7 @@ public class Piece {
     public boolean hasMoved = false;
 
 
-	Piece() {
+	public Piece() {
 		this.name1 = " ";
         this.fullName = "empty";
         this.color = "none";
@@ -19,7 +19,7 @@ public class Piece {
         this.hasMoved = false;
 	}
 
-    Piece(Piece current) {
+    public Piece(Piece current) {
         this.name1 = current.name1;
         this.fullName = current.fullName;
         this.color = current.color;
@@ -27,7 +27,7 @@ public class Piece {
         this.hasMoved = current.hasMoved;
     }
 
-	Piece(String pieceName) {
+	public Piece(String pieceName) {
 		this.fullName = pieceName;
         this.hasMoved = false;
         if(pieceName.equals("wKing")) {

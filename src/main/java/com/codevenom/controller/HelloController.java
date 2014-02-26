@@ -1,6 +1,6 @@
 package com.codevenom.controller;
 
-import com.codevenom.service.Board;
+import com.codevenom.model.State;
 import com.codevenom.service.LegalMoveService;
 
 import com.firebase.client.Firebase;
@@ -44,7 +44,14 @@ public class HelloController {
         return isLegal;
     }
 
-    @RequestMapping(value="/isCheck.htm",method= RequestMethod.POST)
+    @RequestMapping(value="/initializeBoard.htm",method= RequestMethod.POST)
+    public @ResponseBody
+    String initializeBoard(@RequestParam Map<String, String> params) {
+        State game_state = new State();
+        return "initialized";
+    }
+
+    /*@RequestMapping(value="/isCheck.htm",method= RequestMethod.POST)
     public @ResponseBody
     String isCheck(@RequestParam Map<String, String> params) {
         String is_check = LegalMoveService.isCheck();
@@ -55,13 +62,8 @@ public class HelloController {
     String isCheckMate(@RequestParam Map<String, String> params) {
         String is_check_mate = LegalMoveService.isCheckMate();
         return is_check_mate;
-    }
+    }*/
 
-    @RequestMapping(value="/initializeBoard.htm",method= RequestMethod.POST)
-    public @ResponseBody
-    String initializeBoard(@RequestParam Map<String, String> params) {
-        Board board = new Board();
-        return "initialized";
-    }
+
 
 }
