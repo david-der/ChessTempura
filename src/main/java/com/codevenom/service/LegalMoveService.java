@@ -3,6 +3,7 @@ package com.codevenom.service;
 import com.codevenom.model.Notation;
 import com.codevenom.model.State;
 import com.codevenom.model.Piece;
+import com.codevenom.model.Move;
 
 /**
  * Copyright 2013 SWOL.co - Soccer Without Limits
@@ -12,18 +13,17 @@ import com.codevenom.model.Piece;
  */
 public class LegalMoveService {
 
+    ////////////////////////////////////////////////////////////////////////
+    // There are many ways a move can be illegal.
+    // Only return "legal" if the move passes all the illegal filters.
+    ////////////////////////////////////////////////////////////////////////
     public static String isThisMoveLegal(String start, String end, String piece, boolean checkOnly) {
-        //System.out.println("Received move " + piece + " from " + start + " to " + end);
 
         int oldCol = Notation.col(start);
         int oldRow = Notation.row(start);
         int newCol = Notation.col(end);
         int newRow = Notation.row(end);
         String color = piece.substring(0, 1);
-
-        //System.out.println("old square integers:" + oldCol + " " + oldRow);
-        //System.out.println("new square integers:" + newCol + " " + newRow);
-
         String moveType = "legal";   //the end of this function returns moveType
         /////////// possible values:
         //legal
@@ -34,11 +34,10 @@ public class LegalMoveService {
         //white_pawn_promotion
         //black_pawn_promotion
 
-        ////////////////////////////////////////////////////////////////////////
-        // There are many ways a move can be illegal.
-        // Only return "legal" if the move passes all the illegal filters.
-        ////////////////////////////////////////////////////////////////////////
+        Piece p = State.board[oldCol][oldRow];
 
+
+        //1. whites turn, blacks turn
         if(! checkOnly) {  // whose turn it is becomes backwards when looking for check
             if(State.isWhitesTurn) {
                 if(color.equals("b")) {
@@ -54,10 +53,7 @@ public class LegalMoveService {
             }
         }
 
-
-        Piece p = State.board[oldCol][oldRow];
-
-        //can't take your own piece
+        //2. can't take your own piece
         if(p.color.equals("white") && State.board[newCol][newRow].color.equals("white")) {
             return "illegal";
         }
@@ -65,6 +61,166 @@ public class LegalMoveService {
             return "illegal";
         }
 
+        //3. geometry
+        moveType = correctGeometry(start, end, piece);
+        if(moveType.equals("illegal")) {
+            return "illegal";
+        }
+
+        //4. clear path
+        if(!isClearPath(start, end, p.name1)) {
+            return "illegal";
+        }
+
+
+
+        //5. obey check rules (can't move into check, must relieve check)
+
+        String is_check = "";
+        //for a normal move, checkOnly == false and the move must obey check rules
+        //sometimes pseudo moves are made to look for check or checkmate, this avoids infinite loop
+        if(! checkOnly) {
+            //checkOnly == true when looking for any legal move to king's square (isCheck)
+            //can any piece move to the king end square?
+
+            //checkOnly == true when looking for check mate (isCheckMate)
+            //can any move occur to get rid of check?
+
+
+            String obey_check = considerCheck(start, end, piece);
+
+            if(obey_check.equals("illegal")) {
+                return "illegal";
+            }
+
+            //passed all the illegal move filters
+            //create the move, unless the function was only called for Check detection
+            Move move = new Move();
+            move.setWhiteMove(State.isWhitesTurn); //backwards bc move was made
+            move.setStartSquare(start);
+            move.setEndSquare(end);
+            move.setPieceName(piece);
+            //move.setCapture(false);      //change this!
+            //move.setAmbiguousCol(false); //change this
+            //move.setAmbiguousRow(false); //change this
+            if(moveType.equals("white_queenside_castle")) {
+                move.setQueensideCastle(true);
+                State.board[4][1] = State.board[1][1]; //move rook
+                State.board[1][1] = new Piece(); //empty
+            }
+            if(moveType.equals("black_queenside_castle")) {
+                move.setQueensideCastle(true);
+                State.board[4][8] = State.board[1][8]; //move rook
+                State.board[1][8] = new Piece(); //empty
+            }
+            if(moveType.equals("white_kingside_castle")) {
+                move.setKingsideCastle(true);
+                State.board[6][1] = State.board[8][1]; //move rook
+                State.board[8][1] = new Piece(); //empty
+            }
+            if(moveType.equals("black_kingside_castle")) {
+                move.setKingsideCastle(true);
+                State.board[6][8] = State.board[8][8]; //move rook
+                State.board[8][8] = new Piece(); //empty
+            }
+            if(moveType.equals("white_pawn_promotion") || moveType.equals("black_pawn_promotion")) {
+                move.setPawnPromotion(true);
+            }
+
+            if(State.isWhitesTurn) {
+                State.whiteMoveHistory.add(move);
+                move.setMoveNumber(State.whiteMoveHistory.size());
+            }
+            else{
+                State.blackMoveHistory.add(move);
+                move.setMoveNumber(State.blackMoveHistory.size());
+            }
+
+
+            //passed all the illegal move filters
+            //execute the move, unless the function was only called for Check detection
+            Piece previous_new = State.board[newCol][newRow];
+            State.board[newCol][newRow] = State.board[oldCol][oldRow];
+            State.board[oldCol][oldRow] = previous_new;
+            State.isWhitesTurn = !State.isWhitesTurn;
+            p.hasMoved = true;
+
+            //after executing the move, is it check or check mate?
+            is_check = isCheck(false);
+            //System.out.println("is_check: " + is_check);
+            if(is_check.equals("check")) {
+                String is_check_mate = isCheckMate();
+                System.out.println("is_check_mate: " + is_check_mate);
+            }
+
+
+            String notation = Notation.algebraicNotation(move);
+            System.out.println(move.getMoveNumber() + ". " + notation);
+            return notation;
+
+        }
+
+
+
+
+        return ""; //should never reach here
+    }
+
+    public static String considerCheck(String start, String end, String piece) {
+        int oldCol = Notation.col(start);
+        int oldRow = Notation.row(start);
+        int newCol = Notation.col(end);
+        int newRow = Notation.row(end);
+
+        //cannot move into Check
+        //make move, look for Check, unmake move.
+        Piece previous_new = State.board[newCol][newRow];
+        State.board[newCol][newRow] = State.board[oldCol][oldRow];
+        State.board[oldCol][oldRow] = previous_new;
+
+        String resultIsCheck = isCheck(false);
+
+        previous_new = State.board[newCol][newRow];
+        State.board[newCol][newRow] = State.board[oldCol][oldRow];
+        State.board[oldCol][oldRow] = previous_new;
+
+        if(resultIsCheck.equals("check")) {
+            return "illegal";
+        }
+
+
+
+        //if white's turn, and white is in check, a legal move must relieve the check
+        if(  (State.whiteInCheck && State.isWhitesTurn) || (State.blackInCheck && !State.isWhitesTurn) ) {
+            //make the move...
+            previous_new = State.board[newCol][newRow];
+            State.board[newCol][newRow] = State.board[oldCol][oldRow];
+            State.board[oldCol][oldRow] = previous_new;
+
+            resultIsCheck = isCheck(false);
+
+            //...unmake the move no matter what (will be re-made below if no return
+            previous_new = State.board[newCol][newRow];
+            State.board[newCol][newRow] = State.board[oldCol][oldRow];
+            State.board[oldCol][oldRow] = previous_new;
+
+            if(resultIsCheck.equals("check")) {
+                return "illegal";
+            }
+        }
+
+        return "legal";
+
+    }
+
+    public static String correctGeometry(String start, String end, String piece) {
+        int oldCol = Notation.col(start);
+        int oldRow = Notation.row(start);
+        int newCol = Notation.col(end);
+        int newRow = Notation.row(end);
+        String color = piece.substring(0, 1);
+        Piece p = State.board[oldCol][oldRow];
+        String moveType = "legal";
 
         boolean thisMoveIsCastle = false;
         if(p.name1.equals("K")) {
@@ -83,9 +239,7 @@ public class LegalMoveService {
                         System.out.println("can't castle, rook already moved");
                         return "illegal";
                     }
-                    System.out.println("legal white castle");
-                    State.board[6][1] = State.board[8][1]; //move rook
-                    State.board[8][1] = new Piece(); //empty
+                    System.out.println("legal white kingside castle");
                     thisMoveIsCastle = true;
                     moveType = "white_kingside_castle";
                 }
@@ -102,9 +256,7 @@ public class LegalMoveService {
                         System.out.println("can't castle, rook already moved");
                         return "illegal";
                     }
-                    System.out.println("legal white castle");
-                    State.board[4][1] = State.board[1][1]; //move rook
-                    State.board[1][1] = new Piece(); //empty
+                    System.out.println("legal white queenside castle");
                     thisMoveIsCastle = true;
                     moveType = "white_queenside_castle";
                 }
@@ -123,9 +275,7 @@ public class LegalMoveService {
                         System.out.println("can't castle, rook already moved");
                         return "illegal";
                     }
-                    System.out.println("legal black castle");
-                    State.board[6][8] = State.board[8][8]; //move rook
-                    State.board[8][8] = new Piece(); //empty
+                    System.out.println("legal black kingside castle");
                     thisMoveIsCastle = true;
                     moveType = "black_kingside_castle";
                 }
@@ -142,9 +292,7 @@ public class LegalMoveService {
                         System.out.println("can't castle, rook already moved");
                         return "illegal";
                     }
-                    System.out.println("legal black castle");
-                    State.board[4][8] = State.board[1][8]; //move rook
-                    State.board[1][8] = new Piece(); //empty
+                    System.out.println("legal black queenside castle");
                     thisMoveIsCastle = true;
                     moveType = "black_queenside_castle";
                 }
@@ -261,77 +409,12 @@ public class LegalMoveService {
             }
 
         } //pawn move
-
-        if(!isClearPath(start, end, p.name1)) {
-            return "illegal";
-        }
-
-
-        //cannot move into Check
-        //make move, look for Check, unmake move.  if legal, move will be made at the bottom of the function
-        if(! checkOnly) {
-
-            Piece previous_new = State.board[newCol][newRow];
-            State.board[newCol][newRow] = State.board[oldCol][oldRow];
-            State.board[oldCol][oldRow] = previous_new;
-
-            String resultIsCheck = isCheck();
-
-            previous_new = State.board[newCol][newRow];
-            State.board[newCol][newRow] = State.board[oldCol][oldRow];
-            State.board[oldCol][oldRow] = previous_new;
-
-            if(resultIsCheck.equals("check")) {
-                return "illegal";
-            }
-        }
-
-
-        //if white's turn, and white is in check, a legal move must relieve the check
-        if(! checkOnly) {
-            if(  (State.whiteInCheck && State.isWhitesTurn) || (State.blackInCheck && !State.isWhitesTurn) ) {
-                //make the move...
-                Piece previous_new = State.board[newCol][newRow];
-                State.board[newCol][newRow] = State.board[oldCol][oldRow];
-                State.board[oldCol][oldRow] = previous_new;
-
-                String resultIsCheck = isCheck();
-
-                //...unmake the move no matter what (will be re-made below if no return
-                previous_new = State.board[newCol][newRow];
-                State.board[newCol][newRow] = State.board[oldCol][oldRow];
-                State.board[oldCol][oldRow] = previous_new;
-
-                if(resultIsCheck.equals("check")) {
-                    return "illegal";
-                }
-            }
-        }
-
-        //passed all the illegal move filters
-        //execute the move, unless the function was only called for Check detection
-        if(! checkOnly) {
-            Piece previous_new = State.board[newCol][newRow];
-            State.board[newCol][newRow] = State.board[oldCol][oldRow];
-            State.board[oldCol][oldRow] = previous_new;
-            State.isWhitesTurn = !State.isWhitesTurn;
-            p.hasMoved = true;
-        }
-
-        if(! checkOnly ) {
-            String is_check = isCheck();
-            System.out.println("is_check: " + is_check);
-            if(is_check.equals("check")) {
-                String is_check_mate = isCheckMate();
-                System.out.println("is_check_mate: " + is_check_mate);
-            }
-        }
-
-
         return moveType;
     }
 
-    public static String isCheck() {
+
+
+    public static String isCheck(boolean mateQueryOnly) {
 
         //if black just moved, it's whites's turn, is white in Check
         if(State.isWhitesTurn) {
@@ -355,8 +438,10 @@ public class LegalMoveService {
                         String start = Notation.square(col,row);
                         String moveType = isThisMoveLegal(start, end_king_square, piece_name, true);
                         if(!moveType.equals("illegal")) {
-                            System.out.println(start + " " + piece_name + " \t: wKing " + end_king_square + " \t CHECK!");
-                            State.whiteInCheck = true;
+                            if(!mateQueryOnly) {
+                                System.out.println(start + " " + piece_name + " \t: wKing " + end_king_square + " \t CHECK!");
+                                State.whiteInCheck = true;
+                            }
                             return "check";
                         }
                     }
@@ -385,8 +470,10 @@ public class LegalMoveService {
                         String start = Notation.square(col,row);
                         String moveType = isThisMoveLegal(start, end_king_square, piece_name, true);
                         if(!moveType.equals("illegal")) {
-                            System.out.println(start + " " + piece_name + " \t: bKing " + end_king_square + " \t CHECK!");
-                            State.blackInCheck = true;
+                            if(!mateQueryOnly) {
+                                System.out.println(start + " " + piece_name + " \t: bKing " + end_king_square + " \t CHECK!");
+                                State.blackInCheck = true;
+                            }
                             return "check";
                         }
                     }
@@ -395,16 +482,18 @@ public class LegalMoveService {
 
 
         }
-        System.out.println("reseting, nobody in check");
-        State.whiteInCheck = false;
-        State.blackInCheck = false;
+        if(!mateQueryOnly) {
+            //System.out.println("reseting, nobody in check");
+            State.whiteInCheck = false;
+            State.blackInCheck = false;
+        }
 
         return "no_check";
 
     }
 
     public static String isCheckMate() {
-        System.out.println("in isCheckMate()");
+        //System.out.println("in isCheckMate()");
         if(State.whiteInCheck) {
             System.out.println("is white in checkmate?");
             State.isWhitesTurn = true;
@@ -414,7 +503,7 @@ public class LegalMoveService {
             State.isWhitesTurn = false;
         }
         else {
-            System.out.println("Nobody in check: " + State.whiteInCheck + " " + State.blackInCheck);
+            //System.out.println("Nobody in check: " + State.whiteInCheck + " " + State.blackInCheck);
             return "not_checkmate";
         }
 
@@ -440,7 +529,7 @@ public class LegalMoveService {
                                 State.board[c][r] = State.board[col][row];
                                 State.board[col][row] = previous_new;
 
-                                String resultIsCheck = isCheck();
+                                String resultIsCheck = isCheck(true);
 
                                 previous_new = State.board[c][r];
                                 State.board[c][r] = State.board[col][row];

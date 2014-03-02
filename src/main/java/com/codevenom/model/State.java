@@ -13,6 +13,8 @@ public class State {
     public static boolean whiteInCheckMate = false; //white loses
     public static boolean blackInCheckMate = false; //black loses
     public static Piece[][] board = startingBoard();
+    public static ArrayList<Move> whiteMoveHistory;
+    public static ArrayList<Move> blackMoveHistory;
 
     public State() {
         isWhitesTurn = true;
@@ -21,6 +23,8 @@ public class State {
         whiteInCheckMate = false;
         blackInCheckMate = false;
         board = startingBoard();
+        whiteMoveHistory = new ArrayList<Move>();
+        blackMoveHistory = new ArrayList<Move>();
 	}
 
 	public static Piece[][] startingBoard() {

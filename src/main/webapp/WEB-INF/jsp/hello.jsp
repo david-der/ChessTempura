@@ -12,7 +12,15 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <table id="chess-board">
+                <table id="chess-moves" style="float: left" width="150">
+                    <tr>
+                        <td id="num" class="moveNumber" align="left"> move </td>
+                        <td id="1w"  class="whiteMove"  align="left"> white </td>
+                        <td id="1b"  class="blackMove"  align="left"> black </td>
+                    </tr>
+                </table>
+
+                <table id="chess-board" align="left">
                     <tr>
                     	<td id="8" class="border" align="center">8</td>
                     	
@@ -193,7 +201,8 @@
         var start = null; //id, e2
         var end = null;   //id, e4
 		var piece = null; //class, wPawn
-
+        var turn_number = 0;
+        var isWhitesTurn = true;
 
         initializeBoard();
 
@@ -265,6 +274,7 @@
                         //legal_move = true;
                         $(sq).append(highlightedPiece);
                         $('#chess-board img').removeClass('highlighted');
+                        writeMove(response);
                         resetVars();
                     }
                 },
@@ -273,6 +283,24 @@
                 }
             });
             //return legal_move;
+        }
+        function writeMove(move_notation) {
+            var table = document.getElementById("chess-moves");
+
+            if(isWhitesTurn) {
+                ++turn_number;
+                var row = table.insertRow(turn_number);
+                var cell1 = row.insertCell(0); //number
+                var cell2 = row.insertCell(1); //white
+                cell1.innerHTML = turn_number;
+                cell2.innerHTML = move_notation;
+            }
+            /*else {
+                var x=table.rows[turn_number].cells;
+                x[2].innerHTML=move_notation;
+            }*/
+
+            isWhitesTurn = !isWhitesTurn;
         }
 
         function resetVars() {
@@ -285,63 +313,6 @@
             $('#chess-board img').removeClass('highlighted');
         }
 
-
-        /*function sendCaptureToServer(start, end, p, capturedPiece) {
-            $.ajax({
-                type: "POST",
-                url: "/makeMove.htm",
-                data: "startSquare=" + start + "&endSquare=" + end + "&piece=" + p + "&captured_piece=" + capturedPiece,
-                success: function(response){
-
-                },
-                error: function(e){
-                    alert('Error in send capture to server.');
-                }
-            });
-            //return legal_move;
-        }
-
-        function isCheck() {
-            $.ajax({
-                type: "POST",
-                url: "/isCheck.htm",
-                success: function(response){
-                    //console.log("success in isCheck");
-                },
-                error: function(e){
-                    alert('Error in isCheck');
-                }
-            });
-        }
-        function isCheckMate() {
-            $.ajax({
-                type: "POST",
-                url: "/isCheckMate.htm",
-                success: function(response){
-                    //console.log("success in isCheckMate");
-                },
-                error: function(e){
-                    alert('Error in isCheckMate');
-                }
-            });
-        }*/
-
-
-        
-        <%--function makeTableHTML(myArray) {
-            var result = "<table border=1>";
-            for(var i=0; i<myArray.length; i++) {
-                result += "<tr>";
-                for(var j=0; j<myArray[i].length; j++){
-                    result += "<td>"+myArray[i][j]+"</td>";
-                }
-                result += "</tr>";
-            }
-            result += "</table>";
-
-            return result;
-        }
-        --%>
         
     </script>
 </body>

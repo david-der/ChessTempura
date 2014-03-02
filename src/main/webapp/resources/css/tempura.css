@@ -2,6 +2,7 @@
     border: solid lightseagreen 3px;
 }
 
+
 .light-square {
     background-color: #ffffff;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#cccccc));
