@@ -292,13 +292,14 @@
                 var row = table.insertRow(turn_number);
                 var cell1 = row.insertCell(0); //number
                 var cell2 = row.insertCell(1); //white
+                var cell3 = row.insertCell(2); //black
                 cell1.innerHTML = turn_number;
                 cell2.innerHTML = move_notation;
             }
-            /*else {
+            else {
                 var x=table.rows[turn_number].cells;
                 x[2].innerHTML=move_notation;
-            }*/
+            }
 
             isWhitesTurn = !isWhitesTurn;
         }
