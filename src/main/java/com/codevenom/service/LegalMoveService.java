@@ -33,6 +33,7 @@ public class LegalMoveService {
         //black_queenside_castle
         //white_pawn_promotion
         //black_pawn_promotion
+        //en_passant
 
         Piece p = State.board[oldCol][oldRow];
 
@@ -126,7 +127,15 @@ public class LegalMoveService {
             if(moveType.equals("white_pawn_promotion") || moveType.equals("black_pawn_promotion")) {
                 move.setPawnPromotion(true);
             }
-
+            if(moveType.equals("en_passant")) {
+                move.setCapture(true);
+            }
+            if(State.board[oldCol][oldRow].color.equals("white") && State.board[newCol][newRow].color.equals("black")) {
+                move.setCapture(true);
+            }
+            if(State.board[oldCol][oldRow].color.equals("black") && State.board[newCol][newRow].color.equals("white")) {
+                move.setCapture(true);
+            }
             if(State.isWhitesTurn) {
                 State.whiteMoveHistory.add(move);
                 move.setMoveNumber(State.whiteMoveHistory.size());
@@ -135,6 +144,7 @@ public class LegalMoveService {
                 State.blackMoveHistory.add(move);
                 move.setMoveNumber(State.blackMoveHistory.size());
             }
+
 
 
             //passed all the illegal move filters
@@ -344,16 +354,8 @@ public class LegalMoveService {
                     //System.out.println("illegal pawn move. too far horizontally");
                     return "illegal";
                 }
-                else if( abs(newCol-oldCol) == 1 && !State.board[newCol][newRow].color.equals("black") ) {
-                    //System.out.println("illegal pawn move. can't change column if not attacking");
-                    return "illegal";
-                }
-                else if( abs(newCol-oldCol) == 0 && State.board[newCol][newRow].color.equals("black") ) {
-                    //System.out.println("illegal pawn move. can't attack straight");
-                    return "illegal";
-                }
-                else if( newRow - oldRow < 0 ) {
-                    //System.out.println("illegal pawn move. backwards");
+                else if( newRow - oldRow <= 0 ) {
+                    //System.out.println("illegal pawn move. must move forward");
                     return "illegal";
                 }
                 else if( newRow - oldRow > 2) {
@@ -361,12 +363,31 @@ public class LegalMoveService {
                     return "illegal";
                 }
                 else if(oldRow != 2 && abs(newRow - oldRow) == 2) {
-                    //System.out.println("illegal pawn move. can only move 2 spaces from starting square");
+                    //System.out.println("illegal pawn move. can only move 2 spaces on pawn's first move.");
                     return "illegal";
                 }
                 else if(State.board[newCol][newRow].color.equals("black") && ( abs(newCol-oldCol) != 1 || newRow-oldRow != 1  )  ) {
                     //System.out.println("illegal pawn move. incorrect attack");
                     return "illegal";
+                }
+                else if(abs(newCol-oldCol) == 1 && newRow-oldRow == 1) { //if attack move
+                    if(!State.board[newCol][newRow].color.equals("black")) {
+                        //only legal to move diagonol on non-capture if capturing "en passant"
+                        String prior_move_end = State.blackMoveHistory.get(State.blackMoveHistory.size() - 1).getEndSquare();
+                        String prior_move_start = State.blackMoveHistory.get(State.blackMoveHistory.size() - 1).getStartSquare();
+                        String required_end = Notation.square(newCol, newRow-1);
+                        String required_start = Notation.square(newCol, newRow+1);
+                        if(!State.board[newCol][oldRow].fullName.equals("bPawn")
+                                || !prior_move_end.equals(required_end)
+                                || !prior_move_start.equals(required_start) ){
+                            //System.out.println("illegal pawn move. can only move diagonal if attacking.");
+                            return "illegal";
+                        }
+                        else {
+                            System.out.println("en passant");
+                            moveType = "en_passant";
+                        }
+                    }
                 }
                 if(newRow == 8) {
                     p = new Piece("wQueen"); //pawn promotion
@@ -378,14 +399,6 @@ public class LegalMoveService {
                     //System.out.println("illegal pawn move. too far horizontally");
                     return "illegal";
                 }
-                else if( abs(newCol-oldCol) == 1 && !State.board[newCol][newRow].color.equals("white") ) {
-                    //System.out.println("illegal pawn move. can't change column if not attacking");
-                    return "illegal";
-                }
-                else if( abs(newCol-oldCol) == 0 && State.board[newCol][newRow].color.equals("white") ) {
-                    //System.out.println("illegal pawn move. can't attack straight");
-                    return "illegal";
-                }
                 else if( oldRow - newRow < 0 ) {
                     //System.out.println("illegal pawn move. backwards");
                     return "illegal";
@@ -395,12 +408,31 @@ public class LegalMoveService {
                     return "illegal";
                 }
                 else if(oldRow != 7 && abs(newRow - oldRow) == 2) {
-                    //System.out.println("illegal pawn move. can only move 2 spaces from starting square");
+                    //System.out.println("illegal pawn move. can only move 2 spaces on pawn's first move");
                     return "illegal";
                 }
                 else if(State.board[newCol][newRow].color.equals("white") && ( abs(newCol-oldCol) != 1 || oldRow-newRow != 1  )  ) {
                     //System.out.println("illegal pawn move. incorrect attack");
                     return "illegal";
+                }
+                else if(abs(newCol-oldCol) == 1 && oldRow-newRow == 1) { //if attack move
+                    if(!State.board[newCol][newRow].color.equals("white")) {
+                        //only legal to move diagonol on non-capture if capturing "en passant"
+                        String prior_move_end = State.whiteMoveHistory.get(State.whiteMoveHistory.size() - 1).getEndSquare();
+                        String prior_move_start = State.whiteMoveHistory.get(State.whiteMoveHistory.size() - 1).getStartSquare();
+                        String required_end = Notation.square(newCol, newRow+1);
+                        String required_start = Notation.square(newCol, newRow-1);
+                        if(!State.board[newCol][oldRow].fullName.equals("wPawn")
+                                || !prior_move_end.equals(required_end)
+                                || !prior_move_start.equals(required_start) ){
+                            //System.out.println("illegal pawn move. can only move diagonal if attacking.");
+                            return "illegal";
+                        }
+                        else {
+                            System.out.println("en passant");
+                            moveType = "en_passant";
+                        }
+                    }
                 }
                 if(newRow == 1) {
                     p = new Piece("bQueen"); //pawn promotion

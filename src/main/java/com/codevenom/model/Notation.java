@@ -68,20 +68,17 @@ public class Notation {
         if(! start_piece.name1.equals("p")) {
             AN += start_piece.name1;
         }
+        else { //pawn's are not given a name, but if it's a capture, specify the start column
+            if(move.getCapture()) {
+                AN += move.getStartSquare().substring(0,1);
+            }
+        }
 
         //2. capture
-        if(move.getWhiteMove() == true) {
-            if(end_piece.color.equals("black")) {
-                move.setCapture(true);
+        if(move.getCapture() == true) {
                 AN += "x";
-            }
         }
-        else if(move.getWhiteMove() == false) {
-            if(end_piece.color.equals("white")) {
-                move.setCapture(true);
-                AN += "x";
-            }
-        }
+
 
         //ambiguous move
         //if any piece of the same name can move to the same end square
