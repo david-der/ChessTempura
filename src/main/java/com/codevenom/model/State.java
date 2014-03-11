@@ -1,23 +1,84 @@
 package com.codevenom.model;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.HashSet;
 
 public class State {
 
-    public static boolean isWhitesTurn = true;
-    public static boolean whiteInCheck = false; //white must move out of check
-    public static boolean blackInCheck = false; //black must move out of check
-    public static boolean whiteInCheckMate = false; //white loses
-    public static boolean blackInCheckMate = false; //black loses
-    public static Piece[][] board = startingBoard();
-    public static ArrayList<Move> whiteMoveHistory;
-    public static ArrayList<Move> blackMoveHistory;
+    private static boolean whitesTurn = true;
+    private static boolean whiteInCheck = false; //white must move out of check
+    private static boolean blackInCheck = false; //black must move out of check
+    private static boolean whiteInCheckMate = false; //white loses
+    private static boolean blackInCheckMate = false; //black loses
+    private static Piece[][] board = startingBoard();
+    private static ArrayList<Move> whiteMoveHistory;
+    private static ArrayList<Move> blackMoveHistory;
+
+    public static boolean isWhitesTurn() {
+        return whitesTurn;
+    }
+
+    public static void setWhitesTurn(boolean isWhitesTurn) {
+        State.whitesTurn = isWhitesTurn;
+    }
+
+    public static boolean isWhiteInCheck() {
+        return whiteInCheck;
+    }
+
+    public static void setWhiteInCheck(boolean whiteInCheck) {
+        State.whiteInCheck = whiteInCheck;
+    }
+
+    public static boolean isBlackInCheck() {
+        return blackInCheck;
+    }
+
+    public static void setBlackInCheck(boolean blackInCheck) {
+        State.blackInCheck = blackInCheck;
+    }
+
+    public static boolean isWhiteInCheckMate() {
+        return whiteInCheckMate;
+    }
+
+    public static void setWhiteInCheckMate(boolean whiteInCheckMate) {
+        State.whiteInCheckMate = whiteInCheckMate;
+    }
+
+    public static boolean isBlackInCheckMate() {
+        return blackInCheckMate;
+    }
+
+    public static void setBlackInCheckMate(boolean blackInCheckMate) {
+        State.blackInCheckMate = blackInCheckMate;
+    }
+
+    public static Piece[][] getBoard() {
+        return board;
+    }
+
+    public static void setBoard(Piece[][] board) {
+        State.board = board;
+    }
+
+    public static ArrayList<Move> getWhiteMoveHistory() {
+        return whiteMoveHistory;
+    }
+
+    public static void setWhiteMoveHistory(ArrayList<Move> whiteMoveHistory) {
+        State.whiteMoveHistory = whiteMoveHistory;
+    }
+
+    public static ArrayList<Move> getBlackMoveHistory() {
+        return blackMoveHistory;
+    }
+
+    public static void setBlackMoveHistory(ArrayList<Move> blackMoveHistory) {
+        State.blackMoveHistory = blackMoveHistory;
+    }
 
     public State() {
-        isWhitesTurn = true;
+        whitesTurn = true;
         whiteInCheck = false;
         blackInCheck = false;
         whiteInCheckMate = false;
@@ -28,7 +89,7 @@ public class State {
 	}
 
 	public static Piece[][] startingBoard() {
-        isWhitesTurn = true;
+        whitesTurn = true;
 
         whiteInCheck = false; //white must move out of check
         blackInCheck = false; //black must move out of check

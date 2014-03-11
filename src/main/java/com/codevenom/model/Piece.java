@@ -4,11 +4,11 @@ package com.codevenom.model;
 
 public class Piece {
 
-	public String color = "";
-    public String name1 = "";
-    public String fullName = "empty";
-    public int value = 0;
-    public boolean hasMoved = false;
+	private String color = "";
+    private String name1 = "";
+    private String fullName = "empty";
+    private int value = 0;
+    private boolean hasMoved = false;
 
 
 	public Piece() {
@@ -27,7 +27,47 @@ public class Piece {
         this.hasMoved = current.hasMoved;
     }
 
-	public Piece(String pieceName) {
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getName1() {
+        return name1;
+    }
+
+    public void setName1(String name1) {
+        this.name1 = name1;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public boolean isHasMoved() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
+
+    public Piece(String pieceName) {
 		this.fullName = pieceName;
         this.hasMoved = false;
         if(pieceName.equals("wKing")) {

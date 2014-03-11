@@ -31,8 +31,7 @@ public class Notation {
         if(col == 6) { c = "f"; }
         if(col == 7) { c = "g"; }
         if(col == 8) { c = "h"; }
-        String square = c + r;
-        return square;
+        return c + r;
     }
 
     public static String algebraicNotation(Move move) {
@@ -48,25 +47,25 @@ public class Notation {
         //5. =Q if pawn promotion
         //6. + if check, # if checkmate
 
-        if(move.getKingsideCastle() == true) {
+        if(move.getKingsideCastle()) {
             return "O-O";
         }
-        if(move.getQueensideCastle() == true) {
+        if(move.getQueensideCastle()) {
             return "O-O-O";
         }
 
-        int oldCol = Notation.col(move.getStartSquare());
-        int oldRow = Notation.row(move.getStartSquare());
+        //int oldCol = Notation.col(move.getStartSquare());
+        //int oldRow = Notation.row(move.getStartSquare());
         int newCol = Notation.col(move.getEndSquare());
         int newRow = Notation.row(move.getEndSquare());
 
-        Piece start_piece = State.board[newCol][newRow];//backwards bc move was made
-        Piece end_piece   = State.board[oldCol][oldRow];
+        Piece start_piece = State.getBoard()[newCol][newRow];//backwards bc move was made
+        //Piece end_piece   = State.getBoard()[oldCol][oldRow];
         //System.out.println("start, end pieces: " + start_piece.fullName + " " + end_piece.fullName);
 
         //1. name1
-        if(! start_piece.name1.equals("p")) {
-            AN += start_piece.name1;
+        if(! start_piece.getName1().equals("p")) {
+            AN += start_piece.getName1();
         }
         else { //pawn's are not given a name, but if it's a capture, specify the start column
             if(move.getCapture()) {
@@ -75,9 +74,8 @@ public class Notation {
         }
 
         //2. capture
-        if(move.getCapture() == true) {
+        if(move.getCapture())
                 AN += "x";
-        }
 
 
         //ambiguous move
@@ -90,15 +88,15 @@ public class Notation {
         AN += move.getEndSquare();
 
         //pawn promotion
-        if(move.getPawnPromotion() == true) {
+        if(move.getPawnPromotion()) {
             AN += "=Q";
         }
 
         // +check, #checkmate
-        if(State.whiteInCheckMate || State.blackInCheckMate) {
+        if(State.isWhiteInCheckMate() || State.isBlackInCheckMate()) {
             AN += "#";
         }
-        else if(State.whiteInCheck || State.blackInCheck) {
+        else if(State.isWhiteInCheck() || State.isBlackInCheck()) {
             AN += "+";
         }
 
