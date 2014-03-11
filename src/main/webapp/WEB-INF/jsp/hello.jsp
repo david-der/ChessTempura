@@ -20,9 +20,9 @@
                     </tr>
                 </table>
 
-                <table id="chess-board" align="left">
+                <table id="chess-board" >
                     <tr>
-                    	<td id="8" class="border" align="center">8</td>
+                    	<td id="8" class="border" >8</td>
                     	
                         <td id="a8" class="light-square">
                             <img src="<c:url value='/resources/images/bR.png'/>" class="bRook">
@@ -50,7 +50,7 @@
                         </td>
                     </tr>
                     <tr>
-                    	<td id="7" class="border" align="center">7</td>
+                    	<td id="7" class="border" >7</td>
                     	
                         <td id="a7" class="dark-square">
                             <img src="<c:url value='/resources/images/bP.png'/>" class="bPawn">
@@ -78,7 +78,7 @@
                         </td>
                     </tr>
                     <tr>
-                    	<td id="6" class="border" align="center">6</td>
+                    	<td id="6" class="border" >6</td>
                         <td id="a6" class="light-square">&nbsp;</td>
                         <td id="b6" class="dark-square">&nbsp;</td>
                         <td id="c6" class="light-square">&nbsp;</td>
@@ -89,7 +89,7 @@
                         <td id="h6" class="dark-square">&nbsp;</td>
                     </tr>
                     <tr>
-                    	<td id="5" class="border" align="center">5</td>
+                    	<td id="5" class="border" >5</td>
                         <td id="a5" class="dark-square">&nbsp;</td>
                         <td id="b5" class="light-square">&nbsp;</td>
                         <td id="c5" class="dark-square">&nbsp;</td>
@@ -100,7 +100,7 @@
                         <td id="h5" class="light-square">&nbsp;</td>
                     </tr>
                     <tr>
-                    	<td id="4" class="border" align="center">4</td>
+                    	<td id="4" class="border" >4</td>
                         <td id="a4" class="light-square">&nbsp;</td>
                         <td id="b4" class="dark-square">&nbsp;</td>
                         <td id="c4" class="light-square">&nbsp;</td>
@@ -111,7 +111,7 @@
                         <td id="h4" class="dark-square">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td id="3" class="border" align="center">3</td>
+                        <td id="3" class="border" >3</td>
                         <td id="a3" class="dark-square">&nbsp;</td>
                         <td id="b3" class="light-square">&nbsp;</td>
                         <td id="c3" class="dark-square">&nbsp;</td>
@@ -122,7 +122,7 @@
                         <td id="h3" class="light-square">&nbsp;</td>
                     </tr>
                     <tr>
-                    	<td id="2" class="border" align="center">2</td>						
+                    	<td id="2" class="border" >2</td>
                    
                         <td id="a2" class="light-square">
                             <img src="<c:url value='/resources/images/wP.png'/>" class="wPawn">
@@ -150,7 +150,7 @@
                         </td>
                     </tr>
                     <tr>
-						<td id="1" class="border" align="center">1</td>
+						<td id="1" class="border" >1</td>
 												
                         <td id="a1" class="dark-square">
                             <img src="<c:url value='/resources/images/wR.png'/>" class="wRook">
@@ -178,15 +178,15 @@
                         </td>
                     </tr>
                     <tr>
-                       	<td id="empty-corner" class="border" align="center">&nbsp;</td>
-                    	<td id="a" class="border" align="center">a</td>
-                    	<td id="b" class="border" align="center">b</td>
-                    	<td id="c" class="border" align="center">c</td>
-                    	<td id="d" class="border" align="center">d</td>
-                    	<td id="e" class="border" align="center">e</td>
-                    	<td id="f" class="border" align="center">f</td>
-                    	<td id="g" class="border" align="center">g</td>
-                    	<td id="h" class="border" align="center">h</td>
+                       	<td id="empty-corner" class="border" >&nbsp;</td>
+                    	<td id="a" class="border" >a</td>
+                    	<td id="b" class="border" >b</td>
+                    	<td id="c" class="border" >c</td>
+                    	<td id="d" class="border" >d</td>
+                    	<td id="e" class="border" >e</td>
+                    	<td id="f" class="border" >f</td>
+                    	<td id="g" class="border" >g</td>
+                    	<td id="h" class="border" >h</td>
                     </tr>
                 </table>
             </div>
@@ -230,7 +230,7 @@
             }
             else if (isPieceHighlighted) {
                 console.log('capturing');
-                //sendCaptureToServer(start, end, piece, this);
+                //$('#chess-board img').parent.click(function(){});
             }
             else {
                 //else, just highlight the newly selected image
@@ -247,10 +247,10 @@
                 type: "POST",
                 url: "/initializeBoard.htm",
                 success: function(response){
-                    console.log("initializeBoard");
+                    console.log("initializeBoard " + response);
                 },
                 error: function(e){
-                    alert('Error in initializeBoard');
+                    alert('Error in initializeBoard ' + response);
                 }
             });
         }
@@ -272,6 +272,7 @@
                     else {
                         console.log('if statement, legal ' + response);
                         //legal_move = true;
+                        $(sq).children("img").remove();
                         $(sq).append(highlightedPiece);
                         $('#chess-board img').removeClass('highlighted');
                         writeMove(response);
@@ -279,7 +280,7 @@
                     }
                 },
                 error: function(e){
-                    alert('Error in send move to server: ' + start + end + p);
+                    alert('Error in send move to server: ' + e + " " + start + end + p);
                 }
             });
             //return legal_move;
@@ -292,7 +293,7 @@
                 var row = table.insertRow(turn_number);
                 var cell1 = row.insertCell(0); //number
                 var cell2 = row.insertCell(1); //white
-                var cell3 = row.insertCell(2); //black
+                row.insertCell(2); //black
                 cell1.innerHTML = turn_number;
                 cell2.innerHTML = move_notation;
             }
